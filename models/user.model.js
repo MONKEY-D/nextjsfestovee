@@ -15,6 +15,12 @@ const userSchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
     password: {
       type: String,
       required: true,
@@ -64,6 +70,7 @@ userSchema.methods = {
   },
 };
 
-const UserModel =
-  mongoose.models.User || mongoose.model("User", userSchema, "users");
+mongoose.models = {};
+
+const UserModel = mongoose.model("User", userSchema, "users");
 export default UserModel;

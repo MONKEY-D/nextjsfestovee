@@ -32,7 +32,7 @@ const EmailVerification = ({ params }) => {
                         <div className='flex justify-center items-center'>
                             <Image src={verifiedImg.src} height={verifiedImg.height} width={verifiedImg.width} className='h-[100px] w-auto' alt='verificationGif' />
                         </div>
-                        <div className='text-center'><h1 className='text-2xl font-bold text-green-500 my-5'>Email Verification Success.</h1>
+                        <div className='text-center'><h1 className='text-2xl font-bold text-green-500 my-5'>Email Verification Success !!</h1>
                             <Button asChild>
                                 <Link href={WEBSITE_HOME}>Continue Shopping.</Link>
                             </Button></div>
@@ -42,7 +42,7 @@ const EmailVerification = ({ params }) => {
                         <div className='flex justify-center items-center'>
                             <Image src={verificationFailedImg.src} height={verificationFailedImg.height} width={verificationFailedImg.width} className='h-[100px] w-auto' alt='verificationFailedGif' />
                         </div>
-                        <div className='text-center'><h1 className='text-2xl font-bold text-red-500 my-5'>Email Verification Failed.</h1>
+                        <div className='text-center'><h1 className='text-2xl font-bold text-red-500 my-5'>Email Verification Failed !!</h1>
                             <Button asChild>
                                 <Link href={WEBSITE_HOME}>Continue Shopping.</Link>
                             </Button></div>

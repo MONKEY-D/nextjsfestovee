@@ -31,6 +31,8 @@ export async function POST(request) {
       return response(true, 409, "User already registered");
     }
 
+    console.log("Final Data:", { name, email, password });
+
     const NewRegistration = new UserModel({
       name,
       email,
@@ -38,6 +40,8 @@ export async function POST(request) {
     });
 
     await NewRegistration.save();
+
+    console.log("Saved User:", NewRegistration);
 
     const secret = new TextEncoder().encode(process.env.SECRET_KEY);
     const token = await new SignJWT({ userId: NewRegistration._id.toString() })
@@ -47,7 +51,7 @@ export async function POST(request) {
       .sign(secret);
 
     await sendMail(
-      "Email Verification request from Kartik Verma",
+      "Email Verification request from Kartik Festovee",
       email,
       emailVerificationLink(
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`
