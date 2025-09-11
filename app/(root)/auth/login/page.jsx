@@ -19,16 +19,24 @@ import z from "zod";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useState } from "react";
 import Link from "next/link";
-import { WEBSITE_REGISTER, WEBSITE_RESETPASSWORD } from "@/routes/WebsiteRoute";
+import {
+  USER_DASHBOARD,
+  WEBSITE_REGISTER,
+  WEBSITE_RESETPASSWORD,
+} from "@/routes/WebsiteRoute";
 import Swal from "sweetalert2";
 import axios from "axios";
 import OTPVerificationForm from "@/components/Application/OTPVerification";
 import { showToast } from "@/lib/showToast";
 import { useDispatch } from "react-redux";
 import { login } from "@/store/reducer/authReducer";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ADMIN_DASHBOARD } from "@/routes/AdminPanelRoute";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isTypePassword, setIsTypePassword] = useState(true);
   const [otpEmail, setOtpEmail] = useState();
@@ -88,6 +96,14 @@ const LoginPage = () => {
       showToast("success", otpResponse.message);
 
       dispatch(login(otpResponse.data));
+
+      if (searchParams.has("callback")) {
+        router.push(searchParams.get("callback"));
+      } else {
+        otpResponse.data.role === "admin"
+          ? router.push(ADMIN_DASHBOARD)
+          : router.push(USER_DASHBOARD);
+      }
     } catch (error) {
       showToast("error", error.message);
     } finally {
@@ -101,11 +117,17 @@ const LoginPage = () => {
         <div className="flex justify-center">
           <Image
             src={Logo}
-            width={70}
-            height={70}
-            alt="logo"
-            style={{ height: "auto" }}
-            className="max-w-[150px]"
+            alt="Logo"
+            width={50}
+            height={50}
+            className="dark:hidden"
+          />
+          <Image
+            src={Logo}
+            alt="Logo"
+            width={50}
+            height={50}
+            className="hidden dark:block dark:invert"
           />
         </div>
         {!otpEmail ? (

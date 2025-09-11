@@ -99,11 +99,17 @@ const ResetPassword = () => {
           <div className="flex justify-center mb-4">
             <Image
               src={Logo}
-              width={70}
-              height={70}
-              alt="logo"
-              style={{ height: "auto" }}
-              className="max-w-[150px]"
+              alt="Logo"
+              width={50}
+              height={50}
+              className="dark:hidden"
+            />
+            <Image
+              src={Logo}
+              alt="Logo"
+              width={50}
+              height={50}
+              className="hidden dark:block dark:invert"
             />
           </div>
 
