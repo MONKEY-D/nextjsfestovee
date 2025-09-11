@@ -19,13 +19,16 @@ import z from "zod";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useState } from "react";
 import Link from "next/link";
-import { WEBSITE_REGISTER } from "@/routes/WebsiteRoute";
+import { WEBSITE_REGISTER, WEBSITE_RESETPASSWORD } from "@/routes/WebsiteRoute";
 import Swal from "sweetalert2";
 import axios from "axios";
 import OTPVerificationForm from "@/components/Application/OTPVerification";
 import { showToast } from "@/lib/showToast";
+import { useDispatch } from "react-redux";
+import { login } from "@/store/reducer/authReducer";
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [isTypePassword, setIsTypePassword] = useState(true);
   const [otpEmail, setOtpEmail] = useState();
@@ -83,6 +86,8 @@ const LoginPage = () => {
 
       setOtpEmail("");
       showToast("success", otpResponse.message);
+
+      dispatch(login(otpResponse.data));
     } catch (error) {
       showToast("error", error.message);
     } finally {
@@ -189,7 +194,12 @@ const LoginPage = () => {
                           )
                         }
                       >
-                        Forgot Password?
+                        <Link
+                          href={WEBSITE_RESETPASSWORD}
+                          className="text-primary"
+                        >
+                          Reset Password
+                        </Link>
                       </button>
                     </div>
                   </div>
