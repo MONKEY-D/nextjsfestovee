@@ -17,7 +17,7 @@ const UploadMedia = ({ isMultiple, queryClient }) => {
     });
   };
 
-  const handleOnQueueEnd = async (results) => {
+  const handleOnQueuesEnd = async (results) => {
     const files = results.info.files;
     const uploadedFiles = files
       .filter((file) => file.uploadInfo)
@@ -52,7 +52,7 @@ const UploadMedia = ({ isMultiple, queryClient }) => {
       signatureEndpoint="/api/cloudinary-signature"
       uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
       onError={handleOnError}
-      onQueuesEnd={handleOnQueueEnd}
+      onQueuesEnd={handleOnQueuesEnd}
       config={{
         cloud: {
           cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,

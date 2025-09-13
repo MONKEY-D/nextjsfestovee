@@ -30,10 +30,10 @@ const ShowCategory = () => {
 
   const action = useCallback((row, deleteType, handleDelete) => {
     let actionMenu = [];
-    action.push(
+    actionMenu.push(
       <EditAction key="edit" href={ADMIN_CATEGORY_EDIT(row.original._id)} />
     );
-    action.push(
+    actionMenu.push(
       <DeleteAction
         key="delete"
         handleDelete={handleDelete}
@@ -47,7 +47,7 @@ const ShowCategory = () => {
   return (
     <div>
       <BreadCrumb breadcrumbData={breadcrumbData} />
-      <Card className="py-0 rounded shadow-sm">
+      <Card className="py-0 rounded shadow-sm gap-0">
         <CardHeader className="pt-3 px-3 border-b [.border-b]:pb-2">
           <div className="flex justify-between items-center">
             <h4 className="text-xl font-semibold">Show Category</h4>
@@ -57,7 +57,7 @@ const ShowCategory = () => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="pb-5">
+        <CardContent className="pt-0 px-0">
           <DataTableWrapper
             queryKey="category-data"
             fetchUrl="/api/category"
@@ -66,7 +66,7 @@ const ShowCategory = () => {
             exportEndPoint="/api/category/export"
             deleteEndPoint="/api/category/delete"
             deleteType="SD"
-            trashView={`${ADMIN_TRASH}}?trashOf=category`}
+            trashView={`${ADMIN_TRASH}?trashOf=category`}
             createAction={action}
           />
         </CardContent>

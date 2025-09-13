@@ -21,7 +21,6 @@ import ButtonLoading from "../ButtonLoading";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { showToast } from "@/lib/showToast";
 import { download, generateCsv, mkConfig } from "export-to-csv";
-import { object } from "zod";
 
 const Datatable = ({
   queryKey,
@@ -44,7 +43,6 @@ const Datatable = ({
   });
 
   const [rowSelection, setRowSelection] = useState({});
-
   const [exportLoading, setExportLoading] = useState(false);
 
   const deleteMutation = useDeleteMutation(queryKey, deleteEndPoint);
@@ -71,8 +69,9 @@ const Datatable = ({
         useKeysAsHeaders: true,
         filename: "csv-data",
       });
+
       let csv;
-      if (object.keys(rowSelection).length > 0) {
+      if (Object.keys(rowSelection).length > 0) {
         // export only selected rows
         const rowData = selectedRows.map((row) => row.original);
         csv = generateCsv(csvConfig)(rowData);
@@ -106,10 +105,11 @@ const Datatable = ({
         "start",
         `${pagination.pageIndex * pagination.pageSize}`
       );
-      url.searchParams.set("set", `${pagination.pageSize}`);
+      url.searchParams.set("size", `${pagination.pageSize}`);
       url.searchParams.set("filters", JSON.stringify(columnFilters ?? []));
       url.searchParams.set("globalFilter", globalFilter ?? "");
       url.searchParams.set("sorting", JSON.stringify(sorting ?? []));
+      url.searchParams.set("deleteType", deleteType);
 
       const { data: response } = await axios.get(url.href);
       return response;
@@ -142,7 +142,7 @@ const Datatable = ({
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
-    rowCount: data?.meta?.totalRowCount ?? 0,
+    rowCount: meta?.totalRowCount ?? 0,
     onRowSelectionChange: setRowSelection,
     state: {
       columnFilters,
@@ -182,13 +182,14 @@ const Datatable = ({
                 !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
               }
               onClick={() =>
-                handleDelete(object.keys(rowSelection), deleteType)
+                handleDelete(Object.keys(rowSelection), deleteType)
               }
             >
               <DeleteIcon />
             </IconButton>
           </Tooltip>
         )}
+
         {deleteType === "PD" && (
           <>
             <Tooltip title="Restore Data">
@@ -197,20 +198,19 @@ const Datatable = ({
                   !table.getIsSomeRowsSelected() &&
                   !table.getIsAllRowsSelected()
                 }
-                onClick={() =>
-                  handleDelete(Object.keys(rowSelection), deleteType)
-                }
+                onClick={() => handleDelete(Object.keys(rowSelection), "RSD")}
               >
                 <RestoreFromTrashIcon />
               </IconButton>
             </Tooltip>
+
             <Tooltip title="Permanently Delete">
               <IconButton
                 disabled={
                   !table.getIsSomeRowsSelected() &&
                   !table.getIsAllRowsSelected()
                 }
-                onClick={() => handleDelete()}
+                onClick={() => handleDelete(Object.keys(rowSelection), "PD")}
               >
                 <DeleteForeverIcon />
               </IconButton>
@@ -220,26 +220,29 @@ const Datatable = ({
       </>
     ),
 
-    enableRowAction: true,
+    enableRowActions: true,
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) =>
       createAction(row, deleteType, handleDelete),
 
-    renderTopToolbarCustomActions: ({ table }) => {
-      <Tooltip>
-        <ButtonLoading
-          type="button"
-          text={
-            <>
-              <SaveAltIcon />
-              Export
-            </>
-          }
-          loading={exportLoading}
-          onClick={() => handleExport(table.getSelectedRowModel().rows)}
-        />
-      </Tooltip>;
-    },
+    renderTopToolbarCustomActions: ({ table }) => (
+      <Tooltip title="Export Data">
+        <span>
+          <ButtonLoading
+            type="button"
+            text={
+              <>
+                <SaveAltIcon fontSize="small" className="mr-1" />
+                Export
+              </>
+            }
+            loading={exportLoading}
+            onClick={() => handleExport(table.getSelectedRowModel().rows)}
+            className="cursor-pointer"
+          />
+        </span>
+      </Tooltip>
+    ),
   });
 
   return <MaterialReactTable table={table} />;
