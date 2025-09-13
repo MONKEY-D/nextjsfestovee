@@ -57,12 +57,17 @@ const Media = ({
           <DropdownMenuContent align="start">
             {deleteType === "SD" && (
               <>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Link href={ADMIN_MEDIA_EDIT(media._id)}>
-                    <MdOutlineEdit />
-                    Edit
-                  </Link>
-                </DropdownMenuItem>
+                <Link
+                  href={ADMIN_MEDIA_EDIT(media._id)}
+                  passHref
+                >
+                  <DropdownMenuItem asChild>
+                    <a className="flex items-center gap-2">
+                      <MdOutlineEdit />
+                      Edit
+                    </a>
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() => handleCopyLink(media.secure_url)}

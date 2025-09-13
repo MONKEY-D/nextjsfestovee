@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { showToast } from "@/lib/showToast";
 import axios from "axios";
 
-const UploadMedia = ({ isMultiple }) => {
+const UploadMedia = ({ isMultiple, queryClient }) => {
   const handleOnError = () => {
     Swal.fire({
       icon: "error",
@@ -38,6 +38,8 @@ const UploadMedia = ({ isMultiple }) => {
         if (!mediaUploadResponse.success) {
           throw new Error(mediaUploadResponse.message);
         }
+
+        queryClient.invalidateQueries(["media-data"]);
         showToast("success", mediaUploadResponse.message);
       } catch (error) {
         showToast("error", error.message);

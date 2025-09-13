@@ -2,13 +2,14 @@
 import BreadCrumb from "@/components/Application/Admin/BreadCrumb";
 import Media from "@/components/Application/Admin/Media";
 import UploadMedia from "@/components/Application/Admin/UploadMedia";
+import ButtonLoading from "@/components/Application/ButtonLoading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import useDeleteMutation from "@/hooks/useDeleteMutation";
 import { ADMIN_DASHBOARD, ADMIN_MEDIA_SHOW } from "@/routes/AdminPanelRoute";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -20,6 +21,7 @@ const breadcrumbData = [
 ];
 
 const Mediapage = () => {
+  const queryClient = useQueryClient();
   const [deleteType, setDeleteType] = useState("SD");
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -104,7 +106,9 @@ const Mediapage = () => {
               {deleteType === "SD" ? "Media" : "Media Trash"}
             </h4>
             <div className="flex items-center gap-5">
-              {deleteType === "SD" && <UploadMedia />}
+              {deleteType === "SD" && (
+                <UploadMedia isMultiple={true} queryClient={queryClient} />
+              )}
               <div className="flex gap-3">
                 {deleteType === "SD" ? (
                   <Button type="button" variant="destructive">
@@ -121,7 +125,7 @@ const Mediapage = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pb-5">
           {selectedMedia.length > 0 && (
             <div className="py-2 px-3 bg-violet-200 mb-2 rounded flex justify-between items-center">
               <Label>
@@ -190,6 +194,16 @@ const Mediapage = () => {
                 ))}
               </div>
             </>
+          )}
+
+          {hasNextPage && (
+            <ButtonLoading
+              className="cursor-pointer"
+              type="button"
+              loading={isFetching}
+              onClick={() => fetchNextPage()}
+              text="Load More"
+            />
           )}
         </CardContent>
       </Card>
