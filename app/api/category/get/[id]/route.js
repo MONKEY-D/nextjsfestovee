@@ -27,7 +27,7 @@ export async function GET(request, { params }) {
 
     const getCategory = await CategoryModel.findOne(filter).lean();
 
-    if (!getMedia) {
+    if (!getCategory) {
       return response(false, 404, "Category not found");
     }
 
