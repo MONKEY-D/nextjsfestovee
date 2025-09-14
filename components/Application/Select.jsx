@@ -104,9 +104,10 @@ function Select({
             <CommandInput placeholder="Search options..." />
             <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup>
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <CommandItem
-                  key={option.value}
+                  // key={option.value}
+                  key={`${option.value}-${index}`}
                   value={option.label}
                   onSelect={() => handleSelect(option)}
                 >

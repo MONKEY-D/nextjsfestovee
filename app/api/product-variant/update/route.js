@@ -5,7 +5,7 @@ import { zSchema } from "@/lib/zodSchema";
 import ProductModel from "@/models/product.model";
 import { encode } from "entities";
 
-export async function POST(request) {
+export async function PUT(request) {
   try {
     const auth = await isAuthenticated("admin");
     if (!auth.isAuth) {
@@ -16,6 +16,7 @@ export async function POST(request) {
     const payload = await request.json();
 
     const schema = zSchema.pick({
+      _id: true,
       name: true,
       slug: true,
       mrp: true,
@@ -31,22 +32,27 @@ export async function POST(request) {
       return response(false, 400, "Invalid or missing fields", validate.error);
     }
 
-    const productData = validate.data;
+    const validatedData = validate.data;
 
-    const newProduct = new ProductModel({
-      name: productData.name,
-      slug: productData.slug,
-      category: productData.category,
-      mrp: productData.mrp,
-      sellingPrice: productData.sellingPrice,
-      discountPercentage: productData.discountPercentage,
-      description: encode(productData.description),
-      media: productData.media,
+    const getProduct = await ProductModel.findOne({
+      deletedAt: null,
+      _id: validatedData._id,
     });
+    if (!getProduct) {
+      return response(false, 404, "Data not found");
+    }
 
-    await newProduct.save();
+    (getProduct.name = validatedData.name),
+      (getProduct.slug = validatedData.slug);
+    getProduct.category = validatedData.category;
+    getProduct.mrp = validatedData.mrp;
+    getProduct.sellingPrice = validatedData.sellingPrice;
+    getProduct.discountPercentage = validatedData.discountPercentage;
+    getProduct.description = encode(validatedData.description);
+    getProduct.media = validatedData.media;
+    await getProduct.save();
 
-    return response(true, 200, "Product added successfully!!");
+    return response(true, 200, "Product updated successfully!!");
   } catch (error) {
     return catchError(error);
   }
