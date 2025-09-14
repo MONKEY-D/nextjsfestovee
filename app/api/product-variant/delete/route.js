@@ -1,8 +1,7 @@
 import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
-import CategoryModel from "@/models/category.model";
-import ProductModel from "@/models/product.model";
+import ProductVariantModel from "@/models/productVariant.model";
 import mongoose from "mongoose";
 
 export async function PUT(request) {
@@ -21,7 +20,7 @@ export async function PUT(request) {
       return response(false, 400, "Invalid or Empty id list.");
     }
 
-    const data = await ProductModel.find({ _id: { $in: ids } }).lean();
+    const data = await ProductVariantModel.find({ _id: { $in: ids } }).lean();
     if (!data.length) {
       return response(false, 404, "Data not found");
     }
@@ -35,7 +34,7 @@ export async function PUT(request) {
     }
 
     if (deleteType === "SD") {
-      await ProductModel.updateMany(
+      await ProductVariantModel.updateMany(
         { _id: { $in: ids } },
         {
           $set: {
@@ -44,7 +43,7 @@ export async function PUT(request) {
         }
       );
     } else {
-      await ProductModel.updateMany(
+      await ProductVariantModel.updateMany(
         { _id: { $in: ids } },
         {
           $set: {
@@ -80,7 +79,7 @@ export async function DELETE(request) {
       return response(false, 400, "Invalid or Empty id list.");
     }
 
-    const data = await ProductModel.find({ _id: { $in: ids } }).lean();
+    const data = await ProductVariantModel.find({ _id: { $in: ids } }).lean();
     if (!data.length) {
       return response(false, 404, "Data not found");
     }
@@ -93,7 +92,7 @@ export async function DELETE(request) {
       );
     }
 
-    await ProductModel.deleteMany({ _id: { $in: ids } });
+    await ProductVariantModel.deleteMany({ _id: { $in: ids } });
 
     return response(true, 200, "Data deleted permanently");
   } catch (error) {

@@ -1,9 +1,8 @@
 import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
-import ProductModel from "@/models/product.model";
+import ProductVariantModel from "@/models/productVariant.model";
 import { isValidObjectId } from "mongoose";
-import MediaModel from "@/models/media.model";
 
 export async function GET(request, { params }) {
   try {
@@ -26,15 +25,15 @@ export async function GET(request, { params }) {
 
     filter._id = id;
 
-    const getProduct = await ProductModel.findOne(filter)
+    const getProductVariant = await ProductVariantModel.findOne(filter)
       .populate("media", "_id secure_url")
       .lean();
 
-    if (!getProduct) {
-      return response(false, 404, "Product not found");
+    if (!getProductVariant) {
+      return response(false, 404, "Product variant not found");
     }
 
-    return response(true, 200, "Product found", getProduct);
+    return response(true, 200, "Product variant found", getProductVariant);
   } catch (error) {
     return catchError(error);
   }

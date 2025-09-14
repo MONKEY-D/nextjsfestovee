@@ -16,7 +16,7 @@ export async function GET(request) {
       deletedAt: null,
     };
 
-    const getProduct = await ProductModel.find()
+    const getProduct = await ProductModel.find(filter)
       .select("-media -description")
       .sort({ createdAt: -1 })
       .lean();
