@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   DT_CATEGORY_COLUMN,
+  DT_COUPON_COLUMN,
   DT_PRODUCT_COLUMN,
   DT_PRODUCT_VARIANT_COLUMN,
 } from "@/lib/column";
@@ -41,6 +42,13 @@ const TRASH_CONFIG = {
     fetchUrl: "/api/product-variant",
     exportUrl: "/api/product-variant/export",
     deleteUrl: "/api/product-variant/delete",
+  },
+  coupon: {
+    title: "Coupon Trash",
+    columns: DT_COUPON_COLUMN,
+    fetchUrl: "/api/coupon",
+    exportUrl: "/api/coupon/export",
+    deleteUrl: "/api/coupon/delete",
   },
 };
 
