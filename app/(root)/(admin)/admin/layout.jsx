@@ -15,7 +15,7 @@ const layout = ({ children }) => {
       <SidebarProvider>
         <AppSidebar />
         <main className="md:w-[calc(100vw-16rem)]">
-          <div className="pt-[70px] px-8 min-h-[calc(100vh-44px)] pb-10">
+          <div className="pt-[70px] md:px-8 px5 min-h-[calc(100vh-44px)] pb-10">
             <Topbar />
             {children}
           </div>

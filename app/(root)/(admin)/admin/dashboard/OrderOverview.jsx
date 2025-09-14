@@ -36,7 +36,7 @@ const chartData = [
 ];
 
 const chartConfig = {
-  desktop: {
+  amount: {
     label: "Amount",
     color: "#8e51ff",
   },
