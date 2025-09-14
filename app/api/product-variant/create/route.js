@@ -22,6 +22,7 @@ export async function POST(request) {
       mrp: true,
       sellingPrice: true,
       discountPercentage: true,
+      media: true,
     });
 
     const validate = schema.safeParse(payload);

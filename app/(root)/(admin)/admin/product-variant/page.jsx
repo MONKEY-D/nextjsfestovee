@@ -5,16 +5,13 @@ import DeleteAction from "@/components/Application/Admin/DeleteAction";
 import EditAction from "@/components/Application/Admin/EditAction";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { DT_CATEGORY_COLUMN, DT_PRODUCT_COLUMN } from "@/lib/column";
+import { DT_PRODUCT_COLUMN, DT_PRODUCT_VARIANT_COLUMN } from "@/lib/column";
 import { columnConfig } from "@/lib/helperFunctions";
 import {
-  ADMIN_CATEGORY_ADD,
-  ADMIN_CATEGORY_EDIT,
-  ADMIN_CATEGORY_SHOW,
   ADMIN_DASHBOARD,
-  ADMIN_PRODUCT_ADD,
-  ADMIN_PRODUCT_EDIT,
-  ADMIN_PRODUCT_SHOW,
+  ADMIN_PRODUCT_VARIANT_ADD,
+  ADMIN_PRODUCT_VARIANT_EDIT,
+  ADMIN_PRODUCT_VARIANT_SHOW,
   ADMIN_TRASH,
 } from "@/routes/AdminPanelRoute";
 import Link from "next/link";
@@ -23,18 +20,21 @@ import { FiPlus } from "react-icons/fi";
 
 const breadcrumbData = [
   { href: ADMIN_DASHBOARD, label: "Home" },
-  { href: ADMIN_PRODUCT_SHOW, label: "Category" },
+  { href: ADMIN_PRODUCT_VARIANT_SHOW, label: "Category" },
 ];
 
-const ShowProduct = () => {
+const ShowProductVariant = () => {
   const columns = useMemo(() => {
-    return columnConfig(DT_PRODUCT_COLUMN);
+    return columnConfig(DT_PRODUCT_VARIANT_COLUMN);
   }, []);
 
   const action = useCallback((row, deleteType, handleDelete) => {
     let actionMenu = [];
     actionMenu.push(
-      <EditAction key="edit" href={ADMIN_PRODUCT_EDIT(row.original._id)} />
+      <EditAction
+        key="edit"
+        href={ADMIN_PRODUCT_VARIANT_EDIT(row.original._id)}
+      />
     );
     actionMenu.push(
       <DeleteAction
@@ -53,23 +53,23 @@ const ShowProduct = () => {
       <Card className="py-0 rounded shadow-sm gap-0">
         <CardHeader className="pt-3 px-3 border-b [.border-b]:pb-2">
           <div className="flex justify-between items-center">
-            <h4 className="text-xl font-semibold">Show Product</h4>
+            <h4 className="text-xl font-semibold">Show Product Variant</h4>
             <Button>
               <FiPlus />
-              <Link href={ADMIN_PRODUCT_ADD}>New Product</Link>
+              <Link href={ADMIN_PRODUCT_VARIANT_ADD}>New Variant</Link>
             </Button>
           </div>
         </CardHeader>
         <CardContent className="pt-0 px-0">
           <DataTableWrapper
-            queryKey="product-data"
-            fetchUrl="/api/product"
+            queryKey="product-variant-data"
+            fetchUrl="/api/product-variant"
             initialPageSize={10}
             columnsConfig={columns}
-            exportEndPoint="/api/product/export"
-            deleteEndPoint="/api/product/delete"
+            exportEndPoint="/api/product-variant/export"
+            deleteEndPoint="/api/product-variant/delete"
             deleteType="SD"
-            trashView={`${ADMIN_TRASH}?trashOf=product`}
+            trashView={`${ADMIN_TRASH}?trashOf=product-variant`}
             createAction={action}
           />
         </CardContent>
@@ -78,4 +78,4 @@ const ShowProduct = () => {
   );
 };
 
-export default ShowProduct;
+export default ShowProductVariant;
