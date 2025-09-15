@@ -12,6 +12,8 @@ import {
   FaWhatsapp,
   FaYoutube,
 } from "react-icons/fa";
+import { Button } from "../ui/button";
+import ConfirmSellerDialog from "../Application/ConfirmSellerDialog";
 
 const Footer = () => {
   return (
@@ -81,6 +83,9 @@ const Footer = () => {
             </li>
             <li className="mb-2 text-gray-500">
               <Link href="">Terms and Conditions</Link>
+            </li>
+            <li className="mb-2 text-gray-500">
+              <ConfirmSellerDialog />
             </li>
           </ul>
         </div>

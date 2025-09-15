@@ -21,14 +21,14 @@ const Header = () => {
   const auth = useSelector((store) => store.authStore.auth);
   return (
     <div className="bg-white border-b lg:px-32 px-4">
-      <div className="flex justify-between items-center lg:py-5 py-3">
+      <div className="flex justify-between items-center lg:py-3 py-3">
         <Link href={WEBSITE_HOME}>
-          <Image alt="" src={logo} sizes={10} className="lg:w-17 w-14" />
+          <Image alt="" src={logo} sizes={10} className="lg:w-13 w-13" />
         </Link>
 
         <div className="flex justify-between gap-20">
           <nav
-            className={`lg:relative lg:w-auto lg:h-auto lg:top-0 lg:p-0 md:bg-gray-200 lg:bg-white  fixed z-50 top-0 w-full h-screen transition-all duration-500 ${
+            className={`lg:ml-[-90] lg:relative lg:w-auto lg:h-auto lg:top-0 lg:p-0 md:bg-gray-200 lg:bg-white  fixed z-50 top-0 w-full h-screen transition-all duration-500 ${
               isMobileMenu ? "left-0" : "-left-full"
             }`}
           >
