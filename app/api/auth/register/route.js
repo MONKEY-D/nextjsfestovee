@@ -9,6 +9,8 @@ import { SignJWT } from "jose";
 export async function POST(request) {
   try {
     await connectDB();
+
+    // ✅ Validate input
     const validationSchema = zSchema.pick({
       name: true,
       email: true,
@@ -16,6 +18,7 @@ export async function POST(request) {
     });
     const payload = await request.json();
     const validatedData = validationSchema.safeParse(payload);
+
     if (!validatedData.success) {
       return response(
         false,
@@ -24,32 +27,37 @@ export async function POST(request) {
         validatedData.error
       );
     }
-    const { name, email, password } = validatedData.data;
-    const checkUser = await UserModel.exists({ email });
 
+    const { name, email, password } = validatedData.data;
+
+    // ✅ Check if user exists
+    const checkUser = await UserModel.exists({ email });
     if (checkUser) {
-      return response(true, 409, "User already registered");
+      return response(false, 409, "User already registered");
     }
 
-    console.log("Final Data:", { name, email, password });
-
+    // ✅ Create new user
     const NewRegistration = new UserModel({
       name,
       email,
-      password,
+      password, // (make sure your schema has pre-save hook for hashing)
     });
 
     await NewRegistration.save();
 
-    console.log("Saved User:", NewRegistration);
-
+    // ✅ Generate email verification token
     const secret = new TextEncoder().encode(process.env.SECRET_KEY);
-    const token = await new SignJWT({ userId: NewRegistration._id.toString() })
+    const token = await new SignJWT({
+      userId: NewRegistration._id.toString(),
+      email: NewRegistration.email,
+      name: NewRegistration.name,
+    })
       .setIssuedAt()
       .setExpirationTime("1h")
       .setProtectedHeader({ alg: "HS256" })
       .sign(secret);
 
+    // ✅ Send verification email
     await sendMail(
       "Email Verification request from Kartik Festovee",
       email,
@@ -61,7 +69,7 @@ export async function POST(request) {
     return response(
       true,
       200,
-      "Registration Success please verify your email address."
+      "Registration successful! Please verify your email address."
     );
   } catch (error) {
     return catchError(error);

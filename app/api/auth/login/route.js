@@ -31,6 +31,7 @@ export async function POST(request) {
 
     const { email, password } = validatedData.data;
 
+    // ✅ Find user
     const getUser = await UserModel.findOne({ deletedAt: null, email }).select(
       "+password"
     );
@@ -38,7 +39,7 @@ export async function POST(request) {
       return response(false, 401, "Invalid login credentials.");
     }
 
-    // resend email verification link
+    // ✅ Resend verification email if not verified
     if (!getUser.isEmailVerified) {
       const secret = new TextEncoder().encode(process.env.SECRET_KEY);
       const token = await new SignJWT({ userId: getUser._id.toString() })
@@ -48,7 +49,7 @@ export async function POST(request) {
         .sign(secret);
 
       await sendMail(
-        "Email Verification request from Kartik Verma",
+        "Email Verification request from Kartik Festovee",
         email,
         emailVerificationLink(
           `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`
@@ -58,22 +59,24 @@ export async function POST(request) {
       return response(
         false,
         400,
-        "Your email is not verified, we have sent a verification link to your registered email address."
+        "Your email is not verified. We sent a verification link to your email."
       );
     }
 
+    // ✅ Verify password
     const isPasswordVerified = await getUser.comparePassword(password);
     if (!isPasswordVerified) {
       return response(false, 401, "Invalid login credentials.");
     }
 
-    // otp generation
+    // ✅ Clear old OTPs & generate new one
     await OTPModel.deleteMany({ email });
     const otp = generateOtp();
 
     const newOtpData = new OTPModel({ email, otp });
     await newOtpData.save();
 
+    // ✅ Send OTP
     const otpEmailStatus = await sendMail(
       "Your login verification code",
       email,
@@ -83,8 +86,7 @@ export async function POST(request) {
       return response(false, 500, "Failed to send OTP");
     }
 
-    // ✅ Mark success
-    return response(true, 200, "Please verify your device");
+    return response(true, 200, "OTP sent to your email. Please verify.");
   } catch (error) {
     return catchError(error);
   }

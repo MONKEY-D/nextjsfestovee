@@ -100,9 +100,7 @@ const LoginPage = () => {
       if (searchParams.has("callback")) {
         router.push(searchParams.get("callback"));
       } else {
-        otpResponse.data.role === "admin"
-          ? router.push(ADMIN_DASHBOARD)
-          : router.push(USER_DASHBOARD);
+        router.push(USER_DASHBOARD); // default dashboard
       }
     } catch (error) {
       showToast("error", error.message);

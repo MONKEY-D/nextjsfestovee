@@ -11,6 +11,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ADMIN_DASHBOARD } from "@/routes/AdminPanelRoute";
 
 const ConfirmSellerDialog = () => {
   const [open, setOpen] = React.useState(false);
@@ -25,7 +27,7 @@ const ConfirmSellerDialog = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="rounded-full hover:shadow-xl">
-          Switch to seller
+          <Link href={ADMIN_DASHBOARD}>Switch to seller</Link>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px]">

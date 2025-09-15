@@ -9,6 +9,8 @@ import AdminSearch from "./AdminSearch";
 import Logo from "../../../public/assets/FESTOVEE_LOGO_ONLY.png";
 import Image from "next/image";
 import AdminMobileSearch from "./AdminMobileSearch";
+import Link from "next/link";
+import { USER_DASHBOARD } from "@/routes/WebsiteRoute";
 
 const Topbar = () => {
   const { toggleSidebar } = useSidebar();
@@ -33,6 +35,9 @@ const Topbar = () => {
       <div className="ml-65 md:block hidden">
         <AdminSearch />
       </div>
+      <Button >
+        <Link href={USER_DASHBOARD}>Switch to User</Link>
+      </Button>
 
       <div className="flex items-center gap-2 mr-5">
         <AdminMobileSearch />

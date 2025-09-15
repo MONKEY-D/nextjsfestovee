@@ -1,51 +1,46 @@
 import { NextResponse } from "next/server";
-import { USER_DASHBOARD, WEBSITE_LOGIN } from "./routes/WebsiteRoute";
 import { jwtVerify } from "jose";
+
+import { WEBSITE_LOGIN } from "./routes/WebsiteRoute";
 import { ADMIN_DASHBOARD } from "./routes/AdminPanelRoute";
+import { USER_DASHBOARD } from "./routes/WebsiteRoute";
 
 export async function middleware(request) {
   try {
     const pathname = request.nextUrl.pathname;
     const hasToken = request.cookies.has("access_token");
 
+    // 🔹 If no token
     if (!hasToken) {
-      //if user is not logged in and trying to access a protected route then redirect to login page.
-      if (!pathname.startsWith("/auth")) {
-        return NextResponse.redirect(new URL(WEBSITE_LOGIN, request.nextUrl));
+      // Allow auth routes without token
+      if (pathname.startsWith("/auth")) {
+        return NextResponse.next();
       }
-      return NextResponse.next(); //Allow access to auth routes if logged in.
+
+      // Redirect any protected route to login
+      return NextResponse.redirect(new URL(WEBSITE_LOGIN, request.nextUrl));
     }
 
-    //verify token
+    // 🔹 Verify token
     const access_token = request.cookies.get("access_token").value;
-    const { payload } = await jwtVerify(
+    await jwtVerify(
       access_token,
       new TextEncoder().encode(process.env.SECRET_KEY)
     );
-    const role = payload.role;
 
-    //Prevent logged in user from accessign auth routes
+    // ✅ If user is logged in, prevent accessing /auth/*
     if (pathname.startsWith("/auth")) {
-      return NextResponse.redirect(
-        new URL(
-          role === "admin" ? ADMIN_DASHBOARD : USER_DASHBOARD,
-          request.nextUrl
-        )
-      );
+      return NextResponse.redirect(new URL(USER_DASHBOARD, request.nextUrl));
     }
 
-    //protect admin route
-    if (pathname.startsWith("/admin") && role !== "admin") {
-      return NextResponse.redirect(new URL(WEBSITE_LOGIN, request.nextUrl));
+    // ✅ Protect both admin & user dashboards
+    if (pathname.startsWith("/admin") || pathname.startsWith("/my-account")) {
+      return NextResponse.next();
     }
 
-    if (pathname.startsWith("/my-account") && role !== "user") {
-      return NextResponse.redirect(new URL(WEBSITE_LOGIN, request.nextUrl));
-    }
     return NextResponse.next();
   } catch (error) {
-    console.log(error);
-
+    console.error("[middleware] Auth error:", error);
     return NextResponse.redirect(new URL(WEBSITE_LOGIN, request.nextUrl));
   }
 }
