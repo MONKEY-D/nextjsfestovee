@@ -32,5 +32,8 @@ export const ADMIN_CUSTOMERS_SHOW = "/admin/customers";
 // review route
 export const ADMIN_REVIEW_SHOW = "/admin/review";
 
+//shop route
+export const ADMIN_SHOP = "/admin/shop"
+
 //Trash route
 export const ADMIN_TRASH = "/admin/trash";

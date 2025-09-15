@@ -30,20 +30,20 @@ const AppSidebar = () => {
   return (
     <Sidebar className="z-50">
       <SidebarHeader className="border-b h-14 p-0">
-        <div className="flex justify-between items-center px-4">
+        <div className="mt-1 ml-2 flex justify-between items-center px-4">
           <Image
             src={logo}
             alt="Logo"
-            width={50}
-            height={50}
+            width={45}
+            height={45}
             className="dark:hidden"
           />
           {/* Dark mode logo */}
           <Image
             src={logo}
             alt="Logo"
-            width={50}
-            height={50}
+            width={45}
+            height={45}
             className="hidden dark:block dark:invert"
           />
           <Button

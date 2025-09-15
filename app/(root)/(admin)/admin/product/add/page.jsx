@@ -18,7 +18,6 @@ import useFetch from "@/hooks/useFetch";
 import { showToast } from "@/lib/showToast";
 import { zSchema } from "@/lib/zodSchema";
 import {
-  ADMIN_CATEGORY_SHOW,
   ADMIN_DASHBOARD,
   ADMIN_PRODUCT_SHOW,
 } from "@/routes/AdminPanelRoute";
@@ -136,7 +135,7 @@ const AddProduct = () => {
         <CardContent className="pb-5">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid md:grid-cols-2 grid-cols-1 grid-cols-1 gap-5">
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
                 <div className="">
                   <FormField
                     control={form.control}
