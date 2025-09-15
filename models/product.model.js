@@ -51,8 +51,6 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-mongoose.models = {};
-
 productSchema.index({ category: 1 });
 const ProductModel =
   mongoose.models.Product ||
