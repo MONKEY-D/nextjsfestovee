@@ -10,25 +10,29 @@ export async function GET(request, { params }) {
     if (!auth.isAuth) {
       return response(false, 403, "Unauthorized");
     }
+
     await connectDB();
 
-    const getParams = await params;
-    const id = getParams.id;
-
-    const filter = {
-      deletedAt: null,
-    };
+    const { id } = params;
 
     if (!isValidObjectId(id)) {
       return response(false, 404, "Invalid object id");
     }
 
-    filter._id = id;
+    const filter = {
+      _id: id,
+      owner: auth.user._id, // Only categories owned by this user
+      deletedAt: null,
+    };
 
     const getCategory = await CategoryModel.findOne(filter).lean();
 
     if (!getCategory) {
-      return response(false, 404, "Category not found");
+      return response(
+        false,
+        404,
+        "Category not found or you do not have access"
+      );
     }
 
     return response(true, 200, "Category found", getCategory);

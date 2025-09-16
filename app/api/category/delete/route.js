@@ -2,7 +2,6 @@ import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
 import CategoryModel from "@/models/category.model";
-import mongoose from "mongoose";
 
 export async function PUT(request) {
   try {
@@ -10,6 +9,7 @@ export async function PUT(request) {
     if (!auth.isAuth) {
       return response(false, 403, "Unauthorized");
     }
+
     await connectDB();
     const payload = await request.json();
 
@@ -17,12 +17,16 @@ export async function PUT(request) {
     const deleteType = payload.deleteType;
 
     if (!Array.isArray(ids) || ids.length === 0) {
-      return response(false, 400, "Invalid or Empty id list.");
+      return response(false, 400, "Invalid or empty id list.");
     }
 
-    const category = await CategoryModel.find({ _id: { $in: ids } }).lean();
-    if (!category.length) {
-      return response(false, 404, "Data not found");
+    // Only select categories owned by this user
+    const categories = await CategoryModel.find({
+      _id: { $in: ids },
+      owner: auth.user._id,
+    }).lean();
+    if (!categories.length) {
+      return response(false, 404, "No categories found for this user");
     }
 
     if (!["SD", "RSD"].includes(deleteType)) {
@@ -33,30 +37,19 @@ export async function PUT(request) {
       );
     }
 
-    if (deleteType === "SD") {
-      await CategoryModel.updateMany(
-        { _id: { $in: ids } },
-        {
-          $set: {
-            deletedAt: new Date().toISOString(),
-          },
-        }
-      );
-    } else {
-      await CategoryModel.updateMany(
-        { _id: { $in: ids } },
-        {
-          $set: {
-            deletedAt: null,
-          },
-        }
-      );
-    }
+    const updateValue =
+      deleteType === "SD" ? { deletedAt: new Date() } : { deletedAt: null };
+    await CategoryModel.updateMany(
+      { _id: { $in: ids }, owner: auth.user._id },
+      { $set: updateValue }
+    );
 
     return response(
       true,
       200,
-      deleteType === "SD" ? "Data moved to trash" : "Data restored."
+      deleteType === "SD"
+        ? "Category(s) moved to trash"
+        : "Category(s) restored"
     );
   } catch (error) {
     return catchError(error);
@@ -69,6 +62,7 @@ export async function DELETE(request) {
     if (!auth.isAuth) {
       return response(false, 403, "Unauthorized");
     }
+
     await connectDB();
     const payload = await request.json();
 
@@ -76,28 +70,29 @@ export async function DELETE(request) {
     const deleteType = payload.deleteType;
 
     if (!Array.isArray(ids) || ids.length === 0) {
-      return response(false, 400, "Invalid or Empty id list.");
+      return response(false, 400, "Invalid or empty id list.");
     }
 
-    const category = await CategoryModel.find({ _id: { $in: ids } }).lean();
-    if (!category.length) {
-      return response(false, 404, "Data not found");
+    const categories = await CategoryModel.find({
+      _id: { $in: ids },
+      owner: auth.user._id,
+    }).lean();
+    if (!categories.length) {
+      return response(false, 404, "No categories found for this user");
     }
 
-    if (!deleteType === "PD") {
+    if (deleteType !== "PD") {
       return response(
         false,
         400,
-        "Invalid delete operation. Delete type should be PD for this route"
+        "Invalid delete operation. Use PD for permanent delete."
       );
     }
 
-    await CategoryModel.deleteMany({ _id: { $in: ids } });
+    await CategoryModel.deleteMany({ _id: { $in: ids }, owner: auth.user._id });
 
-    return response(true, 200, "Data deleted permanently");
+    return response(true, 200, "Category(s) deleted permanently");
   } catch (error) {
-    await session.commitTransaction();
-    session.endSession();
     return catchError(error);
   }
 }

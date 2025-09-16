@@ -4,7 +4,7 @@ const productVariantSchema = new mongoose.Schema(
   {
     product: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Products",
+      ref: "Product",
     },
     color: {
       type: String,
@@ -49,7 +49,6 @@ const productVariantSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-mongoose.models = {};
 
 const ProductVariantModel =
   mongoose.models.ProductVariant ||

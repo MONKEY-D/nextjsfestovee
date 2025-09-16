@@ -41,6 +41,7 @@ export async function PUT(request) {
 
     const shop = await ShopModel.findOne({
       _id: validatedData._id,
+      owner: auth.user._id,
       deletedAt: null,
     });
 

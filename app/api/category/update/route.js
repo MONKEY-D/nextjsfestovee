@@ -14,6 +14,7 @@ export async function PUT(request) {
     await connectDB();
     const payload = await request.json();
 
+    // Validate input
     const schema = zSchema.pick({
       _id: true,
       name: true,
@@ -27,12 +28,24 @@ export async function PUT(request) {
 
     const { _id, name, slug } = validate.data;
 
-    const getCategory = await CategoryModel.findOne({ deletedAt: null, _id });
+    // Only allow updates for categories owned by this user
+    const getCategory = await CategoryModel.findOne({
+      _id,
+      owner: auth.user._id,
+      deletedAt: null,
+    });
+
     if (!getCategory) {
-      return response(false, 404, "Data not found");
+      return response(
+        false,
+        404,
+        "Category not found or you do not have access"
+      );
     }
 
-    (getCategory.name = name), (getCategory.slug = slug);
+    getCategory.name = name;
+    getCategory.slug = slug;
+
     await getCategory.save();
 
     return response(true, 200, "Category updated successfully!!");

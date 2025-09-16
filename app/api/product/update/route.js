@@ -42,6 +42,11 @@ export async function PUT(request) {
       return response(false, 404, "Data not found");
     }
 
+    const shop = await ShopModel.findById(getProduct.shop);
+    if (!shop || shop.owner.toString() !== auth.user._id) {
+      return response(false, 403, "You are not the owner of this product");
+    }
+
     (getProduct.name = validatedData.name),
       (getProduct.slug = validatedData.slug);
     getProduct.category = validatedData.category;

@@ -6,13 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
   try {
-    const auth = await isAuthenticated("admin");
-    if (!auth.isAuth) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 403 }
-      );
-    }
+    const auth = await isAuthenticated();
 
     await connectDB();
 
@@ -26,7 +20,7 @@ export async function GET(request) {
     const deleteType = searchParams.get("deleteType");
 
     // Base query for soft/pending delete
-    let matchQuery = {};
+    let matchQuery = { owner: auth.user._id };
     if (deleteType === "SD") {
       matchQuery.deletedAt = null;
     } else if (deleteType === "PD") {

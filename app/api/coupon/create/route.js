@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
 import { zSchema } from "@/lib/zodSchema";
 import CouponModel from "@/models/coupon.model";
+import ShopModel from "@/models/shop.model";
 
 export async function POST(request) {
   try {
@@ -19,6 +20,7 @@ export async function POST(request) {
       discountPercentage: true,
       minShoppingAmount: true,
       validity: true,
+      shopId: true, // user must provide which shop this coupon is for
     });
 
     const validate = schema.safeParse(payload);
@@ -26,13 +28,21 @@ export async function POST(request) {
       return response(false, 400, "Invalid or missing fields", validate.error);
     }
 
-    const couponData = validate.data;
+    const { code, discountPercentage, minShoppingAmount, validity, shopId } =
+      validate.data;
+
+    // Verify shop belongs to current user
+    const shop = await ShopModel.findOne({ _id: shopId, owner: auth.user._id });
+    if (!shop) {
+      return response(false, 403, "Invalid shop or you do not own this shop");
+    }
 
     const newCoupon = new CouponModel({
-      code: couponData.code,
-      discountPercentage: couponData.discountPercentage,
-      minShoppingAmount: couponData.minShoppingAmount,
-      validity: couponData.validity,
+      code,
+      discountPercentage,
+      minShoppingAmount,
+      validity,
+      owner: shop._id, // now correctly referencing the Shop
     });
 
     await newCoupon.save();

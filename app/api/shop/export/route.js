@@ -12,7 +12,10 @@ export async function GET(request) {
 
     await connectDB();
 
-    const filter = { deletedAt: null };
+    const filter = { deletedAt: null, owner: auth.user._id };
+    if (auth.user.role !== "admin") {
+      filter.owner = auth.user._id;
+    }
 
     const shops = await ShopModel.find(filter).sort({ createdAt: -1 }).lean();
 

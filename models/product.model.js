@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    shop: { type: mongoose.Schema.Types.ObjectId, ref: "Shop", required: true },
+    shop: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Shop",
+      required: true,
+      index: true,
+    },
     name: {
       type: String,
       required: true,
@@ -13,18 +18,11 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    name: { type: String, required: true, trim: true },
     slug: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       trim: true,
-    },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true,
     },
     mrp: {
       type: Number,
@@ -32,7 +30,7 @@ const productSchema = new mongoose.Schema(
     },
     sellingPrice: {
       type: Number,
-      required: true,
+      default: 0,
     },
     discountPercentage: {
       type: Number,

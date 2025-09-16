@@ -17,21 +17,16 @@ const mediaSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      index: true, // ✅ fast lookup when deleting
     },
-    path: {
+    secure_url: {
       type: String,
       required: true,
       trim: true,
     },
     thumbnail_url: {
       type: String,
-      required: true,
-      trim: true,
-    },
-    secure_url: {
-      type: String,
-      required: true,
-      trim: true,
+      trim: true, // ✅ make optional
     },
     alt: {
       type: String,
@@ -52,4 +47,5 @@ const mediaSchema = new mongoose.Schema(
 
 const MediaModel =
   mongoose.models.Media || mongoose.model("Media", mediaSchema, "medias");
+
 export default MediaModel;

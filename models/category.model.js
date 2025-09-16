@@ -2,21 +2,20 @@ import mongoose from "mongoose";
 
 const categorySchema = new mongoose.Schema(
   {
-    shop: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Shop",
+      ref: "User",
       required: true,
       index: true,
     },
     name: {
       type: String,
       required: true,
-      unique: true,
+      trim: true,
     },
     slug: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -29,9 +28,11 @@ const categorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// ✅ Ensure uniqueness per shop
 categorySchema.index({ shop: 1, slug: 1 }, { unique: true });
 
 const CategoryModel =
   mongoose.models.Category ||
   mongoose.model("Category", categorySchema, "categories");
+
 export default CategoryModel;

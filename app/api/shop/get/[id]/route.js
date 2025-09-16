@@ -19,7 +19,11 @@ export async function GET(request, { params }) {
       return response(false, 404, "Invalid object id");
     }
 
-    const shop = await ShopModel.findOne({ _id: id, deletedAt: null }).lean();
+    const shop = await ShopModel.findOne({
+      _id: id,
+      deletedAt: null,
+      owner: auth.user._id,
+    }).lean();
 
     if (!shop) {
       return response(false, 404, "Shop not found");

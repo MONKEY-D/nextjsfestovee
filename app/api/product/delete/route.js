@@ -1,63 +1,48 @@
 import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
-import CategoryModel from "@/models/category.model";
 import ProductModel from "@/models/product.model";
-import mongoose from "mongoose";
+import ShopModel from "@/models/shop.model";
 
 export async function PUT(request) {
   try {
     const auth = await isAuthenticated("admin");
-    if (!auth.isAuth) {
-      return response(false, 403, "Unauthorized");
-    }
+    if (!auth.isAuth) return response(false, 403, "Unauthorized");
+
     await connectDB();
-    const payload = await request.json();
+    const { ids = [], deleteType } = await request.json();
 
-    const ids = payload.ids || [];
-    const deleteType = payload.deleteType;
+    if (!Array.isArray(ids) || ids.length === 0)
+      return response(false, 400, "Invalid or empty id list.");
 
-    if (!Array.isArray(ids) || ids.length === 0) {
-      return response(false, 400, "Invalid or Empty id list.");
-    }
+    // Get the shop for the logged-in user
+    const shop = await ShopModel.findOne({ owner: auth.user._id });
+    if (!shop) return response(false, 404, "No shop found for this user");
 
-    const data = await ProductModel.find({ _id: { $in: ids } }).lean();
-    if (!data.length) {
-      return response(false, 404, "Data not found");
-    }
+    const products = await ProductModel.find({
+      _id: { $in: ids },
+      shop: shop._id,
+    }).lean();
+    if (!products.length) return response(false, 404, "Products not found");
 
-    if (!["SD", "RSD"].includes(deleteType)) {
+    if (!["SD", "RSD"].includes(deleteType))
       return response(
         false,
         400,
-        "Invalid delete operation. Delete type should be SD or RSD for this route"
+        "Invalid delete operation. Delete type should be SD or RSD"
       );
-    }
 
-    if (deleteType === "SD") {
-      await ProductModel.updateMany(
-        { _id: { $in: ids } },
-        {
-          $set: {
-            deletedAt: new Date().toISOString(),
-          },
-        }
-      );
-    } else {
-      await ProductModel.updateMany(
-        { _id: { $in: ids } },
-        {
-          $set: {
-            deletedAt: null,
-          },
-        }
-      );
-    }
+    const update =
+      deleteType === "SD" ? { deletedAt: new Date() } : { deletedAt: null };
+    await ProductModel.updateMany(
+      { _id: { $in: ids }, shop: shop._id },
+      { $set: update }
+    );
 
     return response(
       true,
       200,
-      deleteType === "SD" ? "Data moved to trash" : "Data restored."
+      deleteType === "SD" ? "Products moved to trash" : "Products restored"
     );
   } catch (error) {
     return catchError(error);
@@ -67,38 +52,35 @@ export async function PUT(request) {
 export async function DELETE(request) {
   try {
     const auth = await isAuthenticated("admin");
-    if (!auth.isAuth) {
-      return response(false, 403, "Unauthorized");
-    }
+    if (!auth.isAuth) return response(false, 403, "Unauthorized");
+
     await connectDB();
-    const payload = await request.json();
+    const { ids = [], deleteType } = await request.json();
 
-    const ids = payload.ids || [];
-    const deleteType = payload.deleteType;
+    if (!Array.isArray(ids) || ids.length === 0)
+      return response(false, 400, "Invalid or empty id list.");
 
-    if (!Array.isArray(ids) || ids.length === 0) {
-      return response(false, 400, "Invalid or Empty id list.");
-    }
-
-    const data = await ProductModel.find({ _id: { $in: ids } }).lean();
-    if (!data.length) {
-      return response(false, 404, "Data not found");
-    }
-
-    if (!deleteType === "PD") {
+    if (deleteType !== "PD")
       return response(
         false,
         400,
-        "Invalid delete operation. Delete type should be PD for this route"
+        "Delete type should be PD for permanent delete"
       );
-    }
 
-    await ProductModel.deleteMany({ _id: { $in: ids } });
+    // Get the shop for the logged-in user
+    const shop = await ShopModel.findOne({ owner: auth.user._id });
+    if (!shop) return response(false, 404, "No shop found for this user");
 
-    return response(true, 200, "Data deleted permanently");
+    const products = await ProductModel.find({
+      _id: { $in: ids },
+      shop: shop._id,
+    }).lean();
+    if (!products.length) return response(false, 404, "Products not found");
+
+    await ProductModel.deleteMany({ _id: { $in: ids }, shop: shop._id });
+
+    return response(true, 200, "Products deleted permanently");
   } catch (error) {
-    await session.commitTransaction();
-    session.endSession();
     return catchError(error);
   }
 }

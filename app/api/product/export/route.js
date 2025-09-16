@@ -16,7 +16,13 @@ export async function GET(request) {
       deletedAt: null,
     };
 
-    const getProduct = await ProductModel.find(filter)
+    const shop = await ShopModel.findOne({ owner: auth.user._id });
+    if (!shop) return response(false, 404, "No shop found for this user");
+
+    const getProduct = await ProductModel.find({
+      deletedAt: null,
+      shop: shop._id,
+    })
       .select("-media -description")
       .sort({ createdAt: -1 })
       .lean();

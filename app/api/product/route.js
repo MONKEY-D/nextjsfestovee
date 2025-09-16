@@ -23,8 +23,16 @@ export async function GET(request) {
     const sorting = JSON.parse(searchParams.get("sorting") || "[]");
     const deleteType = searchParams.get("deleteType");
 
+    const shop = await ShopModel.findOne({ owner: auth.user._id });
+    if (!shop) {
+      return NextResponse.json(
+        { success: false, message: "No shop found for this user" },
+        { status: 404 }
+      );
+    }
+
     // Build match query
-    let matchQuery = {};
+    let matchQuery = { shop: shop._id };
     if (deleteType === "SD") {
       matchQuery = { deletedAt: null };
     } else if (deleteType === "PD") {

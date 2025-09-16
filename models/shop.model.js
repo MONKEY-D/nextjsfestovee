@@ -13,7 +13,6 @@ const shopSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true,
     },
 
     media: [
@@ -42,6 +41,8 @@ const shopSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+shopSchema.index({ owner: 1, name: 1 }, { unique: true });
 
 const ShopModel =
   mongoose.models.Shop || mongoose.model("Shop", shopSchema, "shops");

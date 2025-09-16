@@ -1,6 +1,6 @@
 import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
-import { catchError, response } from "@/lib/helperFunctions";
+import { catchError } from "@/lib/helperFunctions";
 import CategoryModel from "@/models/category.model";
 import { NextResponse } from "next/server";
 
@@ -8,7 +8,10 @@ export async function GET(request) {
   try {
     const auth = await isAuthenticated("admin");
     if (!auth.isAuth) {
-      return response(false, 403, "Unauthorized");
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 403 }
+      );
     }
 
     await connectDB();
@@ -23,15 +26,16 @@ export async function GET(request) {
     const deleteType = searchParams.get("deleteType");
 
     // Build match query
-    let matchQuery = {};
+    let matchQuery = {
+      owner: auth.user._id, // Only categories belonging to this user
+    };
     if (deleteType === "SD") {
-      matchQuery = { deletedAt: null };
+      matchQuery.deletedAt = null;
     } else if (deleteType === "PD") {
-      matchQuery = { deletedAt: { $ne: null } };
+      matchQuery.deletedAt = { $ne: null };
     }
 
-    // global search
-
+    // Global search
     if (globalFilter) {
       matchQuery["$or"] = [
         { name: { $regex: globalFilter, $options: "i" } },
@@ -39,10 +43,7 @@ export async function GET(request) {
       ];
     }
 
-    // Column Filteration
-    // filters.forEach((filter) => {
-    //   matchQuery[filter.id] = { $regex: filter.value, $options: "i" };
-    // });
+    // Column filtering
     (filters || []).forEach((filter) => {
       matchQuery[filter.id] = { $regex: filter.value, $options: "i" };
     });
@@ -53,8 +54,7 @@ export async function GET(request) {
       sortQuery[sort.id] = sort.desc ? -1 : 1;
     });
 
-    // aggregate pipeline
-
+    // Aggregate pipeline
     const aggregatePipeline = [
       { $match: matchQuery },
       { $sort: Object.keys(sortQuery).length ? sortQuery : { createdAt: -1 } },
@@ -72,9 +72,7 @@ export async function GET(request) {
       },
     ];
 
-    // Execute query
     const getCategory = await CategoryModel.aggregate(aggregatePipeline);
-
     const totalRowCount = await CategoryModel.countDocuments(matchQuery);
 
     return NextResponse.json({

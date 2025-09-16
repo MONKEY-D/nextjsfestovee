@@ -34,6 +34,11 @@ export async function GET(request, { params }) {
       return response(false, 404, "Product not found");
     }
 
+    const shop = await ShopModel.findById(getProduct.shop);
+    if (shop.owner.toString() !== auth.user._id) {
+      return response(false, 403, "Unauthorized");
+    }
+
     return response(true, 200, "Product found", getProduct);
   } catch (error) {
     return catchError(error);
