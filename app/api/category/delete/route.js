@@ -20,7 +20,6 @@ export async function PUT(request) {
       return response(false, 400, "Invalid or empty id list.");
     }
 
-    // Only select categories owned by this user
     const categories = await CategoryModel.find({
       _id: { $in: ids },
       owner: auth.user._id,
