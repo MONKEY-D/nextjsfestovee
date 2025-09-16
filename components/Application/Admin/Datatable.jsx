@@ -5,7 +5,6 @@ import {
   MaterialReactTable,
   MRT_ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton,
-  MRT_ToggleFiltersButton,
   MRT_ToggleFullScreenButton,
   MRT_ToggleGlobalFilterButton,
   useMaterialReactTable,

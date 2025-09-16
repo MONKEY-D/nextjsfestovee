@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema(
   {
+    shop: { type: mongoose.Schema.Types.ObjectId, ref: "Shop", required: true },
     product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
@@ -36,5 +37,5 @@ const reviewSchema = new mongoose.Schema(
 mongoose.models = {};
 
 const ReviewModel =
-  mongoose.models.Media || mongoose.model("Review", reviewSchema, "reviews");
+  mongoose.models.Review || mongoose.model("Review", reviewSchema, "reviews");
 export default ReviewModel;

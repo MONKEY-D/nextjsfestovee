@@ -52,6 +52,6 @@ const productVariantSchema = new mongoose.Schema(
 mongoose.models = {};
 
 const ProductVariantModel =
-  mongoose.models.Product ||
+  mongoose.models.ProductVariant ||
   mongoose.model("ProductVariant", productVariantSchema, "productVariants");
 export default ProductVariantModel;

@@ -31,8 +31,8 @@ const couponSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-mongoose.models = {};
+couponSchema.index({ shop: 1, code: 1 }, { unique: true });
 
 const CouponModel =
-  mongoose.models.Media || mongoose.model("Coupon", couponSchema, "coupons");
+  mongoose.models.Coupon || mongoose.model("Coupon", couponSchema, "coupons");
 export default CouponModel;

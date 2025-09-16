@@ -50,8 +50,6 @@ const mediaSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-mongoose.models = {};
-
 const MediaModel =
   mongoose.models.Media || mongoose.model("Media", mediaSchema, "medias");
 export default MediaModel;

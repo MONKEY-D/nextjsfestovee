@@ -8,9 +8,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DT_CATEGORY_COLUMN, DT_PRODUCT_COLUMN } from "@/lib/column";
 import { columnConfig } from "@/lib/helperFunctions";
 import {
-  ADMIN_CATEGORY_ADD,
-  ADMIN_CATEGORY_EDIT,
-  ADMIN_CATEGORY_SHOW,
   ADMIN_DASHBOARD,
   ADMIN_PRODUCT_ADD,
   ADMIN_PRODUCT_EDIT,

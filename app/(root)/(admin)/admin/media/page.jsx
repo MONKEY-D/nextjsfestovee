@@ -175,12 +175,13 @@ const Mediapage = () => {
           ) : (
             <>
               {data.pages.flatMap((page) =>
-                page.mediaData.map((media) => media._id)
+                (page.mediaData || []).map((media) => media._id)
               ).length === 0 && <div className="text-center">No Data</div>}
+
               <div className="grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 mb-5">
-                {data?.pages?.map((page, index) => (
+                {data.pages.map((page, index) => (
                   <React.Fragment key={index}>
-                    {page?.mediaData?.map((media) => (
+                    {(page.mediaData || []).map((media) => (
                       <Media
                         key={media._id}
                         media={media}

@@ -12,6 +12,7 @@ import {
   DT_PRODUCT_COLUMN,
   DT_PRODUCT_VARIANT_COLUMN,
   DT_REVIEW_COLUMN,
+  DT_SHOP_COLUMN,
 } from "@/lib/column";
 import { columnConfig } from "@/lib/helperFunctions";
 import { ADMIN_DASHBOARD, ADMIN_TRASH } from "@/routes/AdminPanelRoute";
@@ -24,6 +25,13 @@ const breadcrumbData = [
 ];
 
 const TRASH_CONFIG = {
+  shop: {
+    title: "Shop Trash",
+    columns: DT_SHOP_COLUMN,
+    fetchUrl: "/api/shop",
+    exportUrl: "/api/shop/export",
+    deleteUrl: "/api/shop/delete",
+  },
   category: {
     title: "Category Trash",
     columns: DT_CATEGORY_COLUMN,

@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
 import { zSchema } from "@/lib/zodSchema";
 import ProductModel from "@/models/product.model";
+import ShopModel from "@/models/shop.model";
 import { encode } from "entities";
 
 export async function POST(request) {
@@ -33,6 +34,11 @@ export async function POST(request) {
 
     const productData = validate.data;
 
+    const shop = await ShopModel.findOne({ owner: auth.user._id });
+    if (!shop) {
+      return response(false, 400, "No shop found for this user");
+    }
+
     const newProduct = new ProductModel({
       name: productData.name,
       slug: productData.slug,
@@ -42,6 +48,7 @@ export async function POST(request) {
       discountPercentage: productData.discountPercentage,
       description: encode(productData.description),
       media: productData.media,
+      shop: shop._id,
     });
 
     await newProduct.save();

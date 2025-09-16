@@ -42,7 +42,7 @@ export async function POST(request) {
     }
 
     const loggedInUserData = {
-      _id: getUser._id,
+      _id: getUser._id.toString(),
       name: getUser.name,
       avatar: getUser.avatar,
       email: getUser.email,

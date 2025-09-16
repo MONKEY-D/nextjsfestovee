@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
 import { zSchema } from "@/lib/zodSchema";
 import CategoryModel from "@/models/category.model";
+import ShopModel from "@/models/shop.model";
 
 export async function POST(request) {
   try {
@@ -12,6 +13,7 @@ export async function POST(request) {
     }
 
     await connectDB();
+
     const payload = await request.json();
 
     const schema = zSchema.pick({
@@ -26,14 +28,20 @@ export async function POST(request) {
 
     const { name, slug } = validate.data;
 
+    const shop = await ShopModel.findOne({ owner: auth.user._id });
+    if (!shop) {
+      return response(false, 400, "No shop found for this user");
+    }
+
     const newCategory = new CategoryModel({
+      shop: shop._id,
       name,
       slug,
     });
 
     await newCategory.save();
 
-    return response(true, 200, "Category added successfully!!");
+    return response(true, 200, "Category added successfully!!", newCategory);
   } catch (error) {
     return catchError(error);
   }

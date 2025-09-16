@@ -63,7 +63,7 @@ userSchema.methods = {
   },
 };
 
-mongoose.models = {};
+const UserModel =
+  mongoose.models.User || mongoose.model("User", userSchema, "users");
 
-const UserModel = mongoose.model("User", userSchema, "users");
 export default UserModel;

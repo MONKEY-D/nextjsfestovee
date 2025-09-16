@@ -3,8 +3,6 @@ import { catchError, response } from "@/lib/helperFunctions";
 import { zSchema } from "@/lib/zodSchema";
 import OTPModel from "@/models/otp.model";
 import UserModel from "@/models/user.model";
-import { SignJWT } from "jose";
-import { cookies } from "next/headers";
 
 export async function POST(request) {
   try {
