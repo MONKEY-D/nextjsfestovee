@@ -5,6 +5,7 @@ import { zSchema } from "@/lib/zodSchema";
 import ProductVariantModel from "@/models/productVariant.model";
 import ProductModel from "@/models/product.model";
 import ShopModel from "@/models/shop.model";
+import mongoose from "mongoose";
 
 export async function POST(request) {
   try {
@@ -45,7 +46,7 @@ export async function POST(request) {
     // 4️⃣ Check if the product belongs to one of the admin's shops
     const shop = await ShopModel.findOne({
       _id: product.shop,
-      owner: auth.user._id,
+      owner: new mongoose.Types.ObjectId(auth.user._id),
     });
     if (!shop) {
       return response(

@@ -3,7 +3,9 @@ import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
 import CategoryModel from "@/models/category.model";
 import ProductModel from "@/models/product.model";
+import ShopModel from "@/models/shop.model"; // ✅ Missing import
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 export async function GET(request) {
   try {
@@ -15,7 +17,6 @@ export async function GET(request) {
     await connectDB();
 
     const searchParams = request.nextUrl.searchParams;
-
     const start = parseInt(searchParams.get("start") || 0, 10);
     const size = parseInt(searchParams.get("size") || 10, 10);
     const filters = JSON.parse(searchParams.get("filters") || "[]");
@@ -23,7 +24,11 @@ export async function GET(request) {
     const sorting = JSON.parse(searchParams.get("sorting") || "[]");
     const deleteType = searchParams.get("deleteType");
 
-    const shop = await ShopModel.findOne({ owner: auth.user._id });
+    // ✅ cast owner to ObjectId
+    const shop = await ShopModel.findOne({
+      owner: new mongoose.Types.ObjectId(auth.user._id),
+    });
+
     if (!shop) {
       return NextResponse.json(
         { success: false, message: "No shop found for this user" },
@@ -31,52 +36,28 @@ export async function GET(request) {
       );
     }
 
-    // Build match query
+    // ✅ always include shop filter
     let matchQuery = { shop: shop._id };
+
     if (deleteType === "SD") {
-      matchQuery = { deletedAt: null };
+      matchQuery.deletedAt = null;
     } else if (deleteType === "PD") {
-      matchQuery = { deletedAt: { $ne: null } };
+      matchQuery.deletedAt = { $ne: null };
     }
 
     // global search
-
     if (globalFilter) {
       matchQuery["$or"] = [
         { name: { $regex: globalFilter, $options: "i" } },
         { slug: { $regex: globalFilter, $options: "i" } },
         { "categoryData.name": { $regex: globalFilter, $options: "i" } },
-        {
-          $expr: {
-            $regexMatch: {
-              input: { $toString: "$mrp" },
-              regex: globalFilter,
-              options: "i",
-            },
-          },
-        },
-        {
-          $expr: {
-            $regexMatch: {
-              input: { $toString: "$sellingPrice" },
-              regex: globalFilter,
-              options: "i",
-            },
-          },
-        },
-        {
-          $expr: {
-            $regexMatch: {
-              input: { $toString: "$discountPercentage" },
-              regex: globalFilter,
-              options: "i",
-            },
-          },
-        },
+        { mrp: { $regex: globalFilter, $options: "i" } },
+        { sellingPrice: { $regex: globalFilter, $options: "i" } },
+        { discountPercentage: { $regex: globalFilter, $options: "i" } },
       ];
     }
 
-    // Column Filteration
+    // Column filtering
     (filters || []).forEach((filter) => {
       if (
         filter.id === "mrp" ||
@@ -95,8 +76,7 @@ export async function GET(request) {
       sortQuery[sort.id] = sort.desc ? -1 : 1;
     });
 
-    // aggregate pipeline
-
+    // Aggregate pipeline
     const aggregatePipeline = [
       {
         $lookup: {
@@ -106,12 +86,7 @@ export async function GET(request) {
           as: "categoryData",
         },
       },
-      {
-        $unwind: {
-          path: "$categoryData",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
+      { $unwind: { path: "$categoryData", preserveNullAndEmptyArrays: true } },
       { $match: matchQuery },
       { $sort: Object.keys(sortQuery).length ? sortQuery : { createdAt: -1 } },
       { $skip: start },
@@ -132,9 +107,7 @@ export async function GET(request) {
       },
     ];
 
-    // Execute query
     const getProduct = await ProductModel.aggregate(aggregatePipeline);
-
     const totalRowCount = await ProductModel.countDocuments(matchQuery);
 
     return NextResponse.json({

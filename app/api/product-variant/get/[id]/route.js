@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
 import ProductVariantModel from "@/models/productVariant.model";
 import ProductModel from "@/models/product.model";
-import { isValidObjectId } from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 
 export async function GET(request, { params }) {
   try {
@@ -32,7 +32,7 @@ export async function GET(request, { params }) {
     // 2️⃣ Verify the variant belongs to a product in the admin's shop(s)
     const product = await ProductModel.findOne({
       _id: variant.product,
-      shop: auth.user.shop,
+      shop: new mongoose.Types.ObjectId(auth.user.shop),
     }).lean();
     if (!product) {
       return response(

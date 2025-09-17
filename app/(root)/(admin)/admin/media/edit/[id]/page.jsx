@@ -97,10 +97,15 @@ const EditPage = ({ params }) => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="mb-5">
                 <Image
-                  src={mediaData?.data?.secure_url || imgPlaceholder}
+                  src={
+                    mediaData?.data?.secure_url &&
+                    mediaData?.data?.secure_url.trim() !== ""
+                      ? mediaData.data.secure_url
+                      : imgPlaceholder
+                  }
                   width={150}
                   height={150}
-                  alt={mediaData?.alt || "Image"}
+                  alt={mediaData?.data?.alt || "Image"}
                 />
               </div>
               <div className="mb-5">

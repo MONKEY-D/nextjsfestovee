@@ -17,7 +17,7 @@ import { showToast } from "@/lib/showToast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   ADMIN_DASHBOARD,
@@ -35,28 +35,40 @@ const breadcrumbData = [
 const AddShop = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
   const [selectedMedia, setSelectedMedia] = useState([]);
 
-  const formSchema = shopCreateSchema.pick({
-    name: true,
-    description: true,
-    visible: true,
-    phone: true,
-    gstId: true,
-  });
-
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(
+      shopCreateSchema.pick({
+        name: true,
+        description: true,
+        visible: true,
+        phone: true,
+        gstId: true,
+        media: true,
+      })
+    ),
     defaultValues: {
       name: "",
       description: "",
-      visible: "",
+      visible: false,
       phone: "",
       gstId: "",
+      media: [],
     },
+    mode: "onTouched",
   });
 
-  const { control, handleSubmit, setValue, reset, formState } = form;
+  const { handleSubmit, setValue, reset, getValues, formState } = form;
+
+  useEffect(() => {
+    // selectedMedia is array of media objects ({ _id, secure_url, thumbnail_url, ... })
+    const ids = selectedMedia
+      .map((m) => (m && m._id ? String(m._id) : null))
+      .filter(Boolean);
+    setValue("media", ids, { shouldValidate: true, shouldDirty: true });
+  }, [selectedMedia, setValue]);
 
   const editorChange = (event, editor) => {
     setValue("description", editor.getData(), { shouldValidate: true });
@@ -65,17 +77,22 @@ const AddShop = () => {
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      if (selectedMedia.length <= 0) {
+      if (!values.media || values.media.length <= 0) {
         return showToast("error", "Please select at least one media");
       }
 
-      const mediaData = selectedMedia.map((media) => media._id);
-      values.media = mediaData;
+      const payload = {
+        ...values,
+        media: values.media,
+      };
 
-      const { data: response } = await axios.post("/api/shop/create", values);
-      if (!response.success) throw new Error(response.message);
+      console.log("Submitting payload:", payload);
 
-      form.reset();
+      const { data: response } = await axios.post("/api/shop/create", payload);
+
+      if (!response.success) throw new Error(response.message || "Failed");
+
+      reset();
       setSelectedMedia([]);
       showToast("success", response.message);
     } catch (error) {
@@ -98,7 +115,7 @@ const AddShop = () => {
               <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
                 {/* Shop Name */}
                 <FormField
-                  control={control}
+                  control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -115,7 +132,7 @@ const AddShop = () => {
 
                 {/* Phone */}
                 <FormField
-                  control={control}
+                  control={form.control}
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
@@ -130,7 +147,7 @@ const AddShop = () => {
 
                 {/* GST ID */}
                 <FormField
-                  control={control}
+                  control={form.control}
                   name="gstId"
                   render={({ field }) => (
                     <FormItem>
@@ -145,7 +162,7 @@ const AddShop = () => {
 
                 {/* Visible */}
                 <FormField
-                  control={control}
+                  control={form.control}
                   name="visible"
                   render={({ field }) => (
                     <FormItem className="flex items-center space-x-2">
@@ -181,17 +198,31 @@ const AddShop = () => {
 
                 {selectedMedia.length > 0 && (
                   <div className="flex justify-center items-center flex-wrap mb-3 gap-2">
-                    {selectedMedia.map((media) => (
-                      <div key={media._id} className="h-24 w-24 border">
-                        <Image
-                          src={media.url}
-                          height={100}
-                          width={100}
-                          alt=""
-                          className="object-cover"
-                        />
-                      </div>
-                    ))}
+                    {selectedMedia.map((media) => {
+                      // Ensure the src is valid (not empty string)
+                      const rawSrc =
+                        media?.secure_url || media?.thumbnail_url || "";
+                      const imageSrc =
+                        rawSrc && rawSrc.trim().length > 0 ? rawSrc : null;
+
+                      return (
+                        <div key={media._id} className="h-24 w-24 border">
+                          {imageSrc ? (
+                            <Image
+                              src={imageSrc}
+                              height={100}
+                              width={100}
+                              alt={media.alt || "Shop media"}
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center text-xs text-gray-400">
+                              No image
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -201,7 +232,11 @@ const AddShop = () => {
                 >
                   <span className="font-semibold">Select Shop Images</span>
                 </div>
-                <FormMessage>{formState.errors.media?.message}</FormMessage>
+
+                {/* show validation error (zod) for media */}
+                <div className="text-sm text-red-600 mt-2">
+                  {formState.errors.media?.message}
+                </div>
               </div>
 
               {/* Submit */}

@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,7 +30,6 @@ const MediaModal = ({
     const { data: response } = await axios.get(
       `/api/media?page=${page}&limit=18&deleteType=SD`
     );
-
     return response;
   };
 
@@ -56,10 +57,12 @@ const MediaModal = ({
     setPreviouslySelected([]);
     showToast("success", "Media selection cleared");
   };
+
   const handleClose = () => {
     setSelectedMedia(previouslySelected);
     setOpen(false);
   };
+
   const handleSelect = () => {
     if (selectedMedia.length <= 0) {
       return showToast("error", "Please select a media");
@@ -131,11 +134,9 @@ const MediaModal = ({
               </Button>
             </div>
             <div className="flex gap-5">
-              <Button type="button" variant="secondry" onClick={handleClose}>
+              <Button type="button" variant="secondary" onClick={handleClose}>
                 Close
               </Button>
-            </div>
-            <div className="flex gap-5">
               <Button type="button" onClick={handleSelect}>
                 Select
               </Button>

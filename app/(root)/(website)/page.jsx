@@ -5,6 +5,7 @@ import React from "react";
 import banner5 from "@/public/banner/banner5.jpg";
 import banner6 from "@/public/banner/banner6.jpg";
 import FeaturedProduct from "@/components/Website/FeaturedProduct";
+import FeaturedShop from "@/components/Website/FeaturedShop";
 
 const page = () => {
   return (
@@ -38,6 +39,7 @@ const page = () => {
           </div>
         </div>
       </section>
+      <FeaturedShop />
 
       <FeaturedProduct />
     </>

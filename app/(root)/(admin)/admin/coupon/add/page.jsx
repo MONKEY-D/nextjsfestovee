@@ -18,25 +18,34 @@ import { zSchema } from "@/lib/zodSchema";
 import { ADMIN_COUPON_SHOW, ADMIN_DASHBOARD } from "@/routes/AdminPanelRoute";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import slugify from "slugify";
 
 const breadcrumbData = [
   { href: ADMIN_DASHBOARD, label: "Home" },
-  { href: ADMIN_COUPON_SHOW, label: "Products" },
+  { href: ADMIN_COUPON_SHOW, label: "Coupons" },
   { href: "", label: "Add Coupon" },
 ];
 
 const AddCoupon = () => {
   const [loading, setLoading] = useState(false);
+  const [shops, setShops] = useState([]);
+
+  // Fetch admin shops
+  const { data: shopData, error } = useFetch("/api/shop/my-shops"); // endpoint to fetch admin's shops
+
+  useEffect(() => {
+    if (shopData && Array.isArray(shopData)) {
+      setShops(shopData);
+    }
+  }, [shopData]);
 
   const formSchema = zSchema.pick({
     code: true,
     discountPercentage: true,
     minShoppingAmount: true,
     validity: true,
+    shopId: true, // added shopId
   });
 
   const form = useForm({
@@ -46,6 +55,7 @@ const AddCoupon = () => {
       discountPercentage: "",
       minShoppingAmount: "",
       validity: "",
+      shopId: "",
     },
   });
 
@@ -53,9 +63,7 @@ const AddCoupon = () => {
     setLoading(true);
     try {
       const { data: response } = await axios.post("/api/coupon/create", values);
-      if (!response.success) {
-        throw new Error(response.message);
-      }
+      if (!response.success) throw new Error(response.message);
 
       form.reset();
       showToast("success", response.message);
@@ -65,6 +73,7 @@ const AddCoupon = () => {
       setLoading(false);
     }
   };
+
   return (
     <div>
       <BreadCrumb breadcrumbData={breadcrumbData} />
@@ -76,66 +85,42 @@ const AddCoupon = () => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
-                <div className="">
-                  <FormField
-                    control={form.control}
-                    name="code"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Code <span className="text-red-500 font-bold">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="Enter Code"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="">
-                  <FormField
-                    control={form.control}
-                    name="discountPercentage"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Discount Percentage{" "}
-                          <span className="text-red-500 font-bold">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            placeholder="Enter Discount"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-              <div className="">
+                {/* Coupon Code */}
                 <FormField
                   control={form.control}
-                  name="minShoppingAmount"
+                  name="code"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Min. Shopping Amount{" "}
+                        Code <span className="text-red-500 font-bold">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Enter Code"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Discount Percentage */}
+                <FormField
+                  control={form.control}
+                  name="discountPercentage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Discount Percentage{" "}
                         <span className="text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
+                          placeholder="Enter Discount"
                           {...field}
-                          placeholder="Enter Min. Shopping Amount"
                         />
                       </FormControl>
                       <FormMessage />
@@ -143,34 +128,81 @@ const AddCoupon = () => {
                   )}
                 />
               </div>
-              <div className="">
-                <FormField
-                  control={form.control}
-                  name="validity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Validity{" "}
-                        <span className="text-red-500 font-bold">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          {...field}
-                          placeholder="Enter Validity"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+
+              {/* Min Shopping Amount */}
+              <FormField
+                control={form.control}
+                name="minShoppingAmount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Min. Shopping Amount{" "}
+                      <span className="text-red-500 font-bold">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter Min. Shopping Amount"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Validity */}
+              <FormField
+                control={form.control}
+                name="validity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Validity <span className="text-red-500 font-bold">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        placeholder="Enter Validity"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Shop Selector */}
+              <FormField
+                control={form.control}
+                name="shopId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Select Shop{" "}
+                      <span className="text-red-500 font-bold">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        {...field}
+                        options={shops.map((shop) => ({
+                          value: shop._id,
+                          label: shop.name,
+                        }))}
+                        placeholder="Select Shop"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="mb-3 mt-5">
                 <ButtonLoading
                   type="submit"
                   text="Add Coupon"
                   className="cursor-pointer"
+                  loading={loading}
                 />
               </div>
             </form>

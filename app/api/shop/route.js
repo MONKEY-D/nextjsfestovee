@@ -2,6 +2,7 @@ import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError } from "@/lib/helperFunctions";
 import ShopModel from "@/models/shop.model";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
@@ -20,7 +21,7 @@ export async function GET(request) {
     const deleteType = searchParams.get("deleteType");
 
     // Base query for soft/pending delete
-    let matchQuery = { owner: auth.user._id };
+    let matchQuery = { owner: new mongoose.Types.ObjectId(auth.user._id) };
     if (deleteType === "SD") {
       matchQuery.deletedAt = null;
     } else if (deleteType === "PD") {

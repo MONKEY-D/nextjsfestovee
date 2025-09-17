@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/databaseConnection";
 import { catchError } from "@/lib/helperFunctions";
 import CouponModel from "@/models/coupon.model";
 import ShopModel from "@/models/shop.model";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
@@ -18,7 +19,9 @@ export async function GET(request) {
     await connectDB();
 
     // Get all shop IDs for this admin
-    const shops = await ShopModel.find({ owner: auth.user._id })
+    const shops = await ShopModel.find({
+      owner: new mongoose.Types.ObjectId(auth.user._id),
+    })
       .select("_id")
       .lean();
     const shopIds = shops.map((s) => s._id);

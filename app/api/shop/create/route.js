@@ -33,6 +33,7 @@ export async function POST(request) {
 
     const shopData = validate.data;
 
+    console.log(shopData);
     const newShop = new ShopModel({
       owner: auth.user._id,
       name: shopData.name,
@@ -42,6 +43,7 @@ export async function POST(request) {
       gstId: shopData.gstId,
       media: shopData.media,
     });
+    console.log(newShop);
 
     await newShop.save();
 

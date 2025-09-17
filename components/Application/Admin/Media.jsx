@@ -57,15 +57,10 @@ const Media = ({
           <DropdownMenuContent align="start">
             {deleteType === "SD" && (
               <>
-                <Link
-                  href={ADMIN_MEDIA_EDIT(media._id)}
-                  passHref
-                >
-                  <DropdownMenuItem asChild>
-                    <a className="flex items-center gap-2">
-                      <MdOutlineEdit />
-                      Edit
-                    </a>
+                <Link href={ADMIN_MEDIA_EDIT(media._id)} passHref>
+                  <DropdownMenuItem className="flex items-center gap-2">
+                    <MdOutlineEdit />
+                    Edit
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem

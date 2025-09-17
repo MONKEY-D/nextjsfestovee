@@ -34,7 +34,7 @@ const couponSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-couponSchema.index({ shop: 1, code: 1 }, { unique: true });
+couponSchema.index({ owner: 1, code: 1 }, { unique: true });
 
 const CouponModel =
   mongoose.models.Coupon || mongoose.model("Coupon", couponSchema, "coupons");

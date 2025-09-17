@@ -17,7 +17,7 @@ const mediaSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      index: true, // ✅ fast lookup when deleting
+      index: true, 
     },
     secure_url: {
       type: String,
@@ -26,7 +26,7 @@ const mediaSchema = new mongoose.Schema(
     },
     thumbnail_url: {
       type: String,
-      trim: true, // ✅ make optional
+      trim: true,
     },
     alt: {
       type: String,

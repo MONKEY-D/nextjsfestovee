@@ -2,6 +2,7 @@ import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError } from "@/lib/helperFunctions";
 import CategoryModel from "@/models/category.model";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
@@ -27,7 +28,7 @@ export async function GET(request) {
 
     // Build match query
     let matchQuery = {
-      owner: auth.user._id, // Only categories belonging to this user
+      owner: new mongoose.Types.ObjectId(auth.user._id), 
     };
     if (deleteType === "SD") {
       matchQuery.deletedAt = null;
