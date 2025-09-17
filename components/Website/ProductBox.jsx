@@ -4,7 +4,7 @@ import React from "react";
 
 const ProductBox = ({ product }) => {
   const imageSrc =
-    product?.media?.[0]?.secure_url || "/assets/imgPlaceholder.webp";
+    product?.media?.[0]?.secure_url || "/assets/img.webp";
   const imageAlt = product?.media?.[0]?.alt || product?.name || "Product";
 
   return (

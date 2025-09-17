@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import React, { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import imgPlaceholder from "@/public/assets/img-placeholder.webp";
+import imgPlaceholder from "../../../../../../../public/assets/img.webp";
 import { showToast } from "@/lib/showToast";
 import axios from "axios";
 
