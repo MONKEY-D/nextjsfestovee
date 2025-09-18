@@ -32,20 +32,23 @@ const AddCoupon = () => {
   const [shops, setShops] = useState([]);
 
   // Fetch admin shops
-  const { data: shopData, error } = useFetch("/api/shop/my-shops"); // endpoint to fetch admin's shops
-
+  const { data: getShop } = useFetch("/api/shop?deleteType=SD&&size=10000");
   useEffect(() => {
-    if (shopData && Array.isArray(shopData)) {
-      setShops(shopData);
+    if (getShop?.success) {
+      const options = getShop.data.map((shop) => ({
+        label: shop.name,
+        value: shop._id,
+      }));
+      setShops(options);
     }
-  }, [shopData]);
+  }, [getShop]);
 
   const formSchema = zSchema.pick({
     code: true,
     discountPercentage: true,
     minShoppingAmount: true,
     validity: true,
-    shopId: true, // added shopId
+    shopId: true,
   });
 
   const form = useForm({
@@ -184,11 +187,10 @@ const AddCoupon = () => {
                     </FormLabel>
                     <FormControl>
                       <Select
-                        {...field}
-                        options={shops.map((shop) => ({
-                          value: shop._id,
-                          label: shop.name,
-                        }))}
+                        options={shops}
+                        selected={field.value}
+                        setSelected={(val) => field.onChange(val)}
+                        isMulti={false}
                         placeholder="Select Shop"
                       />
                     </FormControl>
