@@ -45,7 +45,7 @@ const Filter = () => {
   }, [searchParams]);
 
   const handlePriceChange = (value) => {
-    console.log(value);
+    
   };
 
   const handleCategoryFilter = (categorySlug) => {
