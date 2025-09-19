@@ -31,7 +31,6 @@ export async function POST(request) {
 
     const { email, password } = validatedData.data;
 
-    // ✅ Find user
     const getUser = await UserModel.findOne({ deletedAt: null, email }).select(
       "+password"
     );
@@ -39,7 +38,6 @@ export async function POST(request) {
       return response(false, 401, "Invalid login credentials.");
     }
 
-    // ✅ Resend verification email if not verified
     if (!getUser.isEmailVerified) {
       const secret = new TextEncoder().encode(process.env.SECRET_KEY);
       const token = await new SignJWT({ _id: getUser._id.toString() })
@@ -63,20 +61,17 @@ export async function POST(request) {
       );
     }
 
-    // ✅ Verify password
     const isPasswordVerified = await getUser.comparePassword(password);
     if (!isPasswordVerified) {
       return response(false, 401, "Invalid login credentials.");
     }
 
-    // ✅ Clear old OTPs & generate new one
     await OTPModel.deleteMany({ email });
     const otp = generateOtp();
 
     const newOtpData = new OTPModel({ email, otp });
     await newOtpData.save();
 
-    // ✅ Send OTP
     const otpEmailStatus = await sendMail(
       "Your login verification code",
       email,

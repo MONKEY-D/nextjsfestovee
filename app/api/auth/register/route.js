@@ -10,7 +10,6 @@ export async function POST(request) {
   try {
     await connectDB();
 
-    // ✅ Validate input
     const validationSchema = zSchema.pick({
       name: true,
       email: true,
@@ -30,22 +29,19 @@ export async function POST(request) {
 
     const { name, email, password } = validatedData.data;
 
-    // ✅ Check if user exists
     const checkUser = await UserModel.exists({ email });
     if (checkUser) {
       return response(false, 409, "User already registered");
     }
 
-    // ✅ Create new user
     const NewRegistration = new UserModel({
       name,
       email,
-      password, // (make sure your schema has pre-save hook for hashing)
+      password,
     });
 
     await NewRegistration.save();
 
-    // ✅ Generate email verification token
     const secret = new TextEncoder().encode(process.env.SECRET_KEY);
     const token = await new SignJWT({
       userId: NewRegistration._id.toString(),
@@ -57,7 +53,6 @@ export async function POST(request) {
       .setProtectedHeader({ alg: "HS256" })
       .sign(secret);
 
-    // ✅ Send verification email
     await sendMail(
       "Email Verification request from Kartik Festovee",
       email,
