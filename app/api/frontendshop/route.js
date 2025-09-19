@@ -79,7 +79,7 @@ export async function GET(request) {
                     ? { $in: ["$$variant.size", size.split(",")] }
                     : { $literal: true },
                   color
-                    ? { $eq: ["$$variant.color", color] }
+                    ? { $in: ["$$variant.color", color.split(",")] }
                     : { $literal: true },
                   { $gte: ["$$variant.sellingPrice", minPrice] },
                   { $lte: ["$$variant.sellingPrice", maxPrice] },

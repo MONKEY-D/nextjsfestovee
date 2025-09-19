@@ -45,7 +45,10 @@ const Filter = () => {
   }, [searchParams]);
 
   const handlePriceChange = (value) => {
-    
+    setPriceFilter({
+      minPrice: value[0],
+      maxPrice: value[1],
+    });
   };
 
   const handleCategoryFilter = (categorySlug) => {

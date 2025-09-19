@@ -38,9 +38,9 @@ export async function middleware(request) {
     }
 
     // Protect both admin & user dashboards
-    // if (pathname.startsWith("/admin") || pathname.startsWith("/my-account")) {
-    //   return NextResponse.next();
-    // }
+    if (pathname.startsWith("/admin") || pathname.startsWith("/my-account")) {
+      return NextResponse.next();
+    }
 
     return NextResponse.next();
   } catch (error) {
