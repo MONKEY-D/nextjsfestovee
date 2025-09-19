@@ -15,7 +15,7 @@ const layout = ({ children }) => {
       <SidebarProvider>
         <AppSidebar />
         <main className="md:w-[calc(100vw-16rem)]">
-          <div className="pt-[70px] md:px-8 px5 min-h-[calc(100vh-44px)] pb-10">
+          <div className="pt-[70px] md:px-8 px-5 min-h-[calc(100vh-44px)] pb-10">
             <Topbar />
             {children}
           </div>
@@ -30,3 +30,13 @@ const layout = ({ children }) => {
 };
 
 export default layout;
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+// Page metadata
+export async function generateMetadata() {
+  return {
+    title: "Dashboard",
+  };
+}
