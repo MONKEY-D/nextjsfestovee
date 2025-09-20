@@ -7,10 +7,8 @@ import React, { useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import useWindowSize from "@/hooks/useWindowSize";
 import axios from "axios";
@@ -37,27 +35,21 @@ const Shop = () => {
 
   const windowSize = useWindowSize();
 
-  const fetchProduct = async (pageParam) => {
-    const { data: getProduct } = await axios.get(
+  const fetchProduct = async (pageParam = 0) => {
+    const { data } = await axios.get(
       `/api/frontendshop?page=${pageParam}&limit=${limit}&sort=${sorting}&${searchParam}`
     );
-    if (!getProduct.success) {
-      return;
-    }
-    return getProduct.data;
+    if (!data.success) throw new Error("Failed to fetch products");
+    return data.data; // returns { products, nextPage }
   };
 
   const { error, data, isFetching, fetchNextPage, hasNextPage } =
     useInfiniteQuery({
       queryKey: ["products", limit, sorting, searchParam],
-      queryFn: async ({ pageParam }) => await fetchProduct(pageParam),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => {
-        return lastPage.nextPage;
-      },
+      queryFn: ({ pageParam = 0 }) => fetchProduct(pageParam),
+      getNextPageParam: (lastPage) => lastPage.nextPage,
     });
 
-  fetchProduct(0);
   return (
     <div>
       <WebsiteBreadcrumb props={breadcrumb} />
@@ -110,7 +102,6 @@ const Shop = () => {
               )}
           </div>
 
-          {/* load more button */}
           <div className="flex justify-center mt-10">
             {hasNextPage ? (
               <ButtonLoading
