@@ -28,28 +28,28 @@ const SHOP_COLUMNS = [
     header: "Name",
     accessorKey: "name",
   },
-  {
-    header: "Media",
-    accessorKey: "media",
-    cell: ({ row }) => (
-      <div className="flex gap-1">
-        {row.original.media?.slice(0, 2).map((m) => (
-          <Image
-            key={m._id || m.url}
-            src={m.url}
-            alt="shop"
-            width={40}
-            height={40}
-            className="object-cover rounded border"
-          />
-        ))}
-      </div>
-    ),
-  },
-  {
-    header: "Description",
-    accessorKey: "description",
-  },
+  // {
+  //   header: "Media",
+  //   accessorKey: "media",
+  //   cell: ({ row }) => (
+  //     <div className="flex gap-1">
+  //       {row.original.media?.slice(0, 2).map((m) => (
+  //         <Image
+  //           key={m._id || m.url}
+  //           src={m.url}
+  //           alt="shop"
+  //           width={40}
+  //           height={40}
+  //           className="object-cover rounded border"
+  //         />
+  //       ))}
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   header: "Description",
+  //   accessorKey: "description",
+  // },
   {
     header: "Visible",
     accessorKey: "visible",

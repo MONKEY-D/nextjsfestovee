@@ -33,7 +33,6 @@ export async function POST(request) {
 
     const shopData = validate.data;
 
-    console.log(shopData);
     const newShop = new ShopModel({
       owner: auth.user._id,
       name: shopData.name,

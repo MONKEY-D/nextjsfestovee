@@ -29,7 +29,7 @@ const AppSidebar = () => {
   const { toggleSidebar } = useSidebar();
   return (
     <Sidebar className="z-50">
-      <SidebarHeader className="border-b h-14 p-0">
+      <SidebarHeader className="border-b h-16 p-0">
         <div className="mt-1 ml-2 flex justify-between items-center px-4">
           <Image
             src={logo}
