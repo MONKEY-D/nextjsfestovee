@@ -28,7 +28,10 @@ const Footer = () => {
             className="mb-2"
           />
           <p className="text-gray-500 text-sm">
-            Welcome to Festovee Multi Tenant E-Commerce. Lets grow together!!
+            Welcome to Festovee. Your trusted gateway to seamless B2B
+            e-commerce. Connect with verified factories, explore growing product
+            categories, and expand your business with transparent, reliable
+            trade— All in one powerful platform.
           </p>
         </div>
 
@@ -99,13 +102,13 @@ const Footer = () => {
             <li className="mb-2 text-gray-500 flex gap-2">
               <MdOutlinePhone size={20} />
               <Link href="" className="text-sm">
-                tel: +91-9516950840
+                tel: +91-7404452903
               </Link>
             </li>
             <li className="mb-2 text-gray-500 flex gap-2">
               <MdOutlineMail size={20} />
               <Link href="" className="text-sm">
-                support@estore.com
+                festovee.in@gmail.com
               </Link>
             </li>
           </ul>
@@ -113,7 +116,7 @@ const Footer = () => {
             <Link href="">
               <FaYoutube className="text-primary" size={25} />
             </Link>
-            <Link href="">
+            <Link href="http://www.instagram.com/festovee">
               <FaInstagram className="text-primary" size={25} />
             </Link>
             <Link href="">
@@ -122,7 +125,7 @@ const Footer = () => {
             <Link href="">
               <FaFacebook className="text-primary" size={25} />
             </Link>
-            <Link href="">
+            <Link href="https://x.com/festovee?t=dDz82_dhHpeLooSLamw4Fg&s=08">
               <FaTwitter className="text-primary" size={25} />
             </Link>
           </div>

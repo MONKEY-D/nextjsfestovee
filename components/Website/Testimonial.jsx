@@ -80,22 +80,29 @@ const Testimonial = () => {
     slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 1280, // xl screens
+        breakpoint: 1280,
         settings: {
           slidesToShow: 2,
         },
       },
       {
-        breakpoint: 768, // tablets
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 768,
         settings: {
           slidesToShow: 1,
         },
       },
       {
-        breakpoint: 480, // very small phones
+        breakpoint: 480,
         settings: {
           slidesToShow: 1,
-          dots: true, // keep navigation
+          slidesToScroll: 1,
+          dots: true,
         },
       },
     ],

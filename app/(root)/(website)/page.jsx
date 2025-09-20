@@ -13,6 +13,8 @@ import { BiSupport } from "react-icons/bi";
 import { TbRosetteDiscountFilled } from "react-icons/tb";
 import PageInfo from "@/components/Website/PageInfo";
 import Categories from "@/components/Website/Categories";
+import SellerCustomerCards from "@/components/Website/SellerCustomerCard";
+import B2BBanners from "@/components/Website/Banner";
 
 const page = () => {
   return (
@@ -25,7 +27,11 @@ const page = () => {
       {/* Page Info */}
       <PageInfo />
 
+      <B2BBanners />
+
       <Categories />
+
+      <SellerCustomerCards />
 
       {/* Featured Shops */}
       <FeaturedShop />
