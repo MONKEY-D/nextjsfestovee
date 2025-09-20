@@ -69,7 +69,10 @@ const MainSlider = () => {
     <div className="w-full relative">
       <Slider {...settings}>
         {banners.map((banner, idx) => (
-          <div key={idx} className="relative w-full aspect-[1440/430]">
+          <div
+            key={idx}
+            className="relative w-full aspect-[1440/430] sm:aspect-[16/5] xs:aspect-[16/6]"
+          >
             <Image
               src={banner}
               alt={`Banner ${idx + 1}`}
