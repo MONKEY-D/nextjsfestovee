@@ -13,7 +13,7 @@ export async function GET(request) {
     const size = searchParams.get("size");
     const color = searchParams.get("color");
     const minPrice = parseInt(searchParams.get("minPrice")) || 0;
-    const maxPrice = parseInt(searchParams.get("maxPrice")) || 0;
+    const maxPrice = parseInt(searchParams.get("maxPrice")) || 100000;
     const categorySlug = searchParams.get("category");
     const search = searchParams.get("q");
 
@@ -32,22 +32,20 @@ export async function GET(request) {
     if (sortOption === "price_high_low") sortquery = { sellingPrice: -1 };
 
     //find category by slug
-    let categoryIds = [];
+    let categoryId = [];
     if (categorySlug) {
-      const categorySlugs = categorySlug.split(",");
-      const categories = await CategoryModel.find({
+      const slugs = categorySlug.split(",");
+      const categoryData = await CategoryModel.find({
         deletedAt: null,
-        slug: { $in: categorySlugs },
+        slug: { $in: slugs },
       })
         .select("_id")
         .lean();
-      categoryIds = categories.map((cat) => cat._id);
+      categoryId = categoryData.map((category) => category._id);
     }
 
     let matchStage = {};
-    if (categoryIds.length > 0) {
-      matchStage.category = { $in: categoryIds };
-    }
+    if (categoryId.length > 0) matchStage.category = { $in: categoryId };
 
     if (search) {
       matchStage.name = { $regex: search, $options: "i" };
@@ -87,6 +85,11 @@ export async function GET(request) {
               },
             },
           },
+        },
+      },
+      {
+        $match: {
+          variants: { $ne: [] },
         },
       },
       {

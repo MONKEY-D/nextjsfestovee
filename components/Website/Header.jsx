@@ -16,106 +16,127 @@ import { useSelector } from "react-redux";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import userIcon from "@/public/assets/user.png";
 import { HiMiniBars3 } from "react-icons/hi2";
+import Search from "./Search";
 
 const Header = () => {
   const [isMobileMenu, setIsMobileMenu] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const auth = useSelector((store) => store.authStore.auth);
+
   return (
-    <div className="bg-white border-b lg:px-32 px-4">
-      <div className="flex justify-between items-center lg:py-3 py-3">
-        <Link href={WEBSITE_HOME}>
-          <Image alt="" src={logo} sizes={10} className="lg:w-13 w-13" />
+    <header className="bg-gray-100 border-b">
+      <div className="flex justify-between items-center px-4 sm:px-6 md:px-12 lg:px-20 xl:px-32 py-3">
+        {/* Logo */}
+        <Link href={WEBSITE_HOME} className="flex-shrink-0">
+          <Image
+            alt="Festovee Logo"
+            src={logo}
+            width={120}
+            height={50}
+            className="w-auto h-10 sm:h-12"
+            priority
+          />
         </Link>
 
-        <div className="flex justify-between gap-20">
+        {/* Nav + Actions */}
+        <div className="flex items-center gap-6 lg:gap-10">
+          {/* Nav Menu */}
           <nav
-            className={`fixed z-50 top-0 w-full h-screen bg-white transition-all duration-500
-    lg:ml-[-90] lg:relative lg:w-auto lg:h-auto lg:top-0 lg:p-0
-    ${isMobileMenu ? "left-0" : "-left-full"}`}
+            className={`fixed inset-0 z-50 bg-white transition-transform duration-500 lg:relative lg:inset-auto lg:bg-transparent
+              ${
+                isMobileMenu ? "translate-x-0" : "-translate-x-full"
+              } lg:translate-x-0`}
           >
-            <div className="lg:hidden flex justify-between items-center bg-gray-50 py-3 border-b px-3">
-              <Image alt="" src={logo} sizes={10} className="lg:w-17 w-14" />
-              <button type="button">
+            {/* Mobile Nav Header */}
+            <div className="lg:hidden flex justify-between items-center bg-gray-50 py-3 border-b px-4">
+              <Image
+                alt="Festovee Logo"
+                src={logo}
+                width={110}
+                height={40}
+                className="w-auto h-10"
+              />
+              <button type="button" onClick={() => setIsMobileMenu(false)}>
                 <IoMdClose
-                  size={25}
-                  className="text-gray-500 hover:text-primary"
-                  onClick={() => setIsMobileMenu(false)}
+                  size={28}
+                  className="text-gray-600 hover:text-primary"
                 />
               </button>
             </div>
 
-            <ul className="lg:flex justify-between items-center gap-10 px-3">
-              <li className="text-gray-600 hover:text-primary hover:font-semibold">
-                <Link href={WEBSITE_HOME} className="block py-2">
-                  Home
-                </Link>
-              </li>
-              <li className="text-gray-600 hover:text-primary hover:font-semibold">
-                <Link href="" className="block py-2">
-                  About
-                </Link>
-              </li>
-              <li className="text-gray-600 hover:text-primary hover:font-semibold">
-                <Link href={WEBSITE_SHOP} className="block py-2">
-                  Shop
-                </Link>
-              </li>
-              <li className="text-gray-600 hover:text-primary hover:font-semibold">
-                <Link href="" className="block py-2">
-                  Products
-                </Link>
-              </li>
-              <li className="text-gray-600 hover:text-primary hover:font-semibold">
-                <Link href="" className="block py-2">
-                  Factories
-                </Link>
-              </li>
-              <li className="text-gray-600 hover:text-primary hover:font-semibold">
-                <Link href="" className="block py-2">
-                  Quotations
-                </Link>
-              </li>
+            {/* Nav Links */}
+            <ul className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10 px-4 lg:px-0 py-6 lg:py-0">
+              {[
+                { name: "Home", href: WEBSITE_HOME },
+                { name: "About", href: "#" },
+                { name: "Shop", href: WEBSITE_SHOP },
+                { name: "Products", href: "#" },
+                { name: "Factories", href: "#" },
+                { name: "Quotations", href: "#" },
+              ].map((link, idx) => (
+                <li key={idx}>
+                  <Link
+                    href={link.href}
+                    className="block py-2 text-gray-700 hover:text-primary hover:font-semibold transition"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
 
-          <div className="flex justify-between items-center gap-8">
-            <button type="button">
+          {/* Actions */}
+          <div className="flex items-center gap-5">
+            {/* Search */}
+            <button
+              type="button"
+              onClick={() => setShowSearch(!showSearch)}
+              className="p-1"
+            >
               <IoIosSearch
-                size={25}
-                className="text-gray-500 hover:text-primary cursor-pointer"
+                size={24}
+                className="text-gray-600 hover:text-primary"
               />
             </button>
+
+            {/* Cart */}
             <Cart />
 
+            {/* Auth */}
             {!auth ? (
               <Link href={WEBSITE_LOGIN}>
                 <VscAccount
-                  size={25}
-                  className="text-gray-500 hover:text-primary cursor-pointer"
+                  size={24}
+                  className="text-gray-600 hover:text-primary"
                 />
               </Link>
             ) : (
               <Link href={USER_DASHBOARD}>
-                <Avatar>
+                <Avatar className="w-8 h-8">
                   <AvatarImage src={auth?.avatar?.url || userIcon.src} />
                 </Avatar>
               </Link>
             )}
 
+            {/* Mobile Menu Button */}
             <button
               type="button"
               className="lg:hidden block"
               onClick={() => setIsMobileMenu(true)}
             >
               <HiMiniBars3
-                size={25}
-                className="text-gray-500 hover:text-primary"
+                size={26}
+                className="text-gray-600 hover:text-primary"
               />
             </button>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Search Overlay */}
+      <Search isShow={showSearch} />
+    </header>
   );
 };
 

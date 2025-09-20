@@ -3,10 +3,13 @@ import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import banner1 from "@/public/banner/banner1.jpg";
-import banner2 from "@/public/banner/banner2.jpg";
-import banner3 from "@/public/banner/banner3.jpg";
-import banner4 from "@/public/banner/banner4.jpg";
+import webbanner1 from "@/public/banner/webbanner1.png";
+import webbanner2 from "@/public/banner/webbanner2.png";
+import webbanner3 from "@/public/banner/webbanner3.png";
+import webbanner4 from "@/public/banner/webbanner4.png";
+import webbanner5 from "@/public/banner/webbanner5.png";
+import webbanner6 from "@/public/banner/webbanner6.png";
+import webbanner7 from "@/public/banner/webbanner7.png";
 import Image from "next/image";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
@@ -53,19 +56,26 @@ const MainSlider = () => {
     ],
   };
 
+  const banners = [
+    webbanner1,
+    webbanner2,
+    webbanner4,
+    webbanner5,
+    webbanner6,
+    webbanner7,
+  ];
+
   return (
     <div className="w-full relative">
       <Slider {...settings}>
-        {[banner1, banner2, banner3, banner4].map((banner, idx) => (
-          <div
-            key={idx}
-            className="relative w-full h-[250px] sm:h-[400px] md:h-[600px]"
-          >
+        {banners.map((banner, idx) => (
+          <div key={idx} className="relative w-full aspect-[1440/430]">
             <Image
               src={banner}
               alt={`Banner ${idx + 1}`}
               fill
               priority
+              sizes="100vw"
               className="object-cover"
             />
           </div>

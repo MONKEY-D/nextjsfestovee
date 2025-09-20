@@ -73,56 +73,64 @@ const Testimonial = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 500,
+    speed: 600,
     autoplay: true,
+    autoplaySpeed: 4000,
     slidesToShow: 3,
     slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1280, // xl screens
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1,
-          dots: true,
-          infinite: true,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 768, // tablets
         settings: {
           slidesToShow: 1,
-          slidesToScroll: 1,
-          dots: false,
+        },
+      },
+      {
+        breakpoint: 480, // very small phones
+        settings: {
+          slidesToShow: 1,
+          dots: true, // keep navigation
         },
       },
     ],
   };
+
   return (
-    <div className="lg:px-32 px-4 sm:pt-20 pt-5 pb-10">
-      <h2 className="text-center sm:text-4xl text-2xl mb-5 font-semibold">
-        Customere Review
+    <section className="px-4 sm:px-8 md:px-12 lg:px-20 xl:px-32 py-10 sm:py-16">
+      <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-semibold mb-10">
+        Customer Reviews
       </h2>
       <Slider {...settings}>
         {testimonials.map((item, index) => (
-          <div key={index} className="p-5">
-            <div className="border rounded-lg p-5">
-              <BsChatQuote size={30} className="mb-3" />
-              <p className="mb-5">{item.review}</p>
-              <h4 className="font-semibold ">{item.name}</h4>
-              <div className="flex mt-1">
-                {Array.from({ length: item.rating }).map((_, i) => (
-                  <IoStar
-                    key={`star${i}`}
-                    className="text-yellow-400"
-                    size={20}
-                  />
-                ))}
+          <div key={index} className="px-3">
+            <div className="h-full flex flex-col border rounded-xl p-5 shadow-sm bg-white">
+              <BsChatQuote size={28} className="mb-3 text-primary/70" />
+              <p className="text-gray-700 text-sm sm:text-base mb-5 flex-grow leading-relaxed">
+                {item.review}
+              </p>
+              <div>
+                <h4 className="font-semibold text-gray-900">{item.name}</h4>
+                <div className="flex mt-1">
+                  {Array.from({ length: item.rating }).map((_, i) => (
+                    <IoStar
+                      key={`star-${index}-${i}`}
+                      className="text-yellow-400"
+                      size={18}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         ))}
       </Slider>
-    </div>
+    </section>
   );
 };
 
