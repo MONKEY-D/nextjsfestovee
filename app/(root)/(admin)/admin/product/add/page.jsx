@@ -61,6 +61,9 @@ const AddProduct = () => {
     sellingPrice: true,
     discountPercentage: true,
     description: true,
+    type: true,
+    moq: true,
+    stock: true,
   });
 
   const form = useForm({
@@ -73,6 +76,9 @@ const AddProduct = () => {
       sellingPrice: "",
       discountPercentage: "",
       description: "",
+      type: "variant",
+      moq: 1,
+      stock: 0,
     },
   });
 
@@ -150,7 +156,7 @@ const AddProduct = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Name <span className="text-red-500">*</span>
+                        Product Name <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="Enter Product Name" />
@@ -196,6 +202,67 @@ const AddProduct = () => {
                           selected={field.value}
                           setSelected={field.onChange}
                           isMulti={false}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Type */}
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Product Type <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className="w-full border rounded p-2"
+                        >
+                          <option value="variant">variant</option>
+                          <option value="non-variant">non-variant</option>
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* MOQ */}
+                <FormField
+                  control={form.control}
+                  name="moq"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Minimum Order Quantity (MOQ)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          placeholder="Enter Minimum Order Quantity"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Stock */}
+                <FormField
+                  control={form.control}
+                  name="stock"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stock</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          placeholder="Enter Stock Quantity"
                         />
                       </FormControl>
                       <FormMessage />

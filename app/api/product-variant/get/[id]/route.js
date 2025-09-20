@@ -29,7 +29,6 @@ export async function GET(request, { params }) {
       return response(false, 404, "Product variant not found");
     }
 
-    // 2️⃣ Verify the variant belongs to a product in the admin's shop(s)
     const product = await ProductModel.findOne({
       _id: variant.product,
       shop: new mongoose.Types.ObjectId(auth.user.shop),

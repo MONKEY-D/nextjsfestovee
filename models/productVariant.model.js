@@ -16,6 +16,8 @@ const productVariantSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    moq: { type: Number, default: 1 },
+    stock: { type: Number, default: 0 },
     mrp: {
       type: Number,
       required: true,
@@ -48,7 +50,6 @@ const productVariantSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 
 const ProductVariantModel =
   mongoose.models.ProductVariant ||

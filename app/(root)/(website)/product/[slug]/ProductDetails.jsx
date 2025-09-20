@@ -12,13 +12,29 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import imgPlaceholder from "@/public/assets/img.webp";
+import { IoStar } from "react-icons/io5";
 
 const ProductDetails = ({ product, variant, colors, sizes, reviewCount }) => {
-  const [ activeThumb, setActiveThumb ] = useState();
+  const [activeThumb, setActiveThumb] = useState();
+
+  // useEffect(() => {
+  //   setActiveThumb(variant?.media[0]?.secure_url);
+  // }, [variant]);
 
   useEffect(() => {
-    setActiveThumb(variant?.media[0]?.secure_url);
-  }, [variant]);
+    const firstImage =
+      variant?.media?.[0]?.secure_url ||
+      product?.media?.[0]?.secure_url ||
+      imgPlaceholder;
+    setActiveThumb(firstImage);
+  }, [variant, product]);
+
+  const thumbnails = variant?.media ||
+    product?.media || [{ secure_url: imgPlaceholder }];
+
+  const handleThumb = (thumbUrl) => {
+    setActiveThumb(thumbUrl);
+  };
 
   return (
     <div className="lg:px-32 px-4">
@@ -51,7 +67,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount }) => {
               src={activeThumb || imgPlaceholder.src}
               width={650}
               height={650}
-              alt="thumbnail"
+              alt="product"
               className="rounded max-w-full"
             />
           </div>
@@ -60,14 +76,43 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount }) => {
               <Image
                 key={thumb._id}
                 src={thumb?.secure_url || imgPlaceholder.src}
-                width={650}
-                height={650}
+                width={100}
+                height={100}
                 alt="product thumbnail"
-                className="rounded max-w-full"
+                className={`md:max-w-full max-w-16 rounded cursor-pointer ${
+                  thumb.secure_url === activeThumb
+                    ? "border-2 border-primary"
+                    : "border"
+                }`}
+                onClick={() => handleThumb(thumb.secure_url)}
               />
             ))}
           </div>
         </div>
+
+        {/* <div className="md:w-1/2 md:mt-0 mt-5">
+          <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
+          <div className="flex items-center gap-1 mb-5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <IoStar />
+            ))}
+            <span className="text-sm ps-2">({reviewCount}reviews)</span>
+          </div>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl font-semibold">
+              {variant.sellingPrice.toLocaleString("en-IN", {
+                style: "currency",
+                currency: "INR",
+              })}
+            </span>
+            <span className="text-xl line-through text-gray">
+              {variant.mrp.toLocaleString("en-IN", {
+                style: "currency",
+                currency: "INR",
+              })}
+            </span>
+          </div>
+        </div> */}
       </div>
     </div>
   );
