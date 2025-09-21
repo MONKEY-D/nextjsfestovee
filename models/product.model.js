@@ -24,19 +24,12 @@ const productSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    type: {
-      type: String,
-      enum: ["variant", "non-variant"],
-    },
-
     moq: {
       type: Number,
-      default: 1,
-      min: 1,
+      required: true,
     },
     stock: {
       type: Number,
-      default: 1,
       required: true,
     },
     mrp: {

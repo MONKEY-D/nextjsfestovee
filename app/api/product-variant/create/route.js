@@ -9,25 +9,25 @@ import mongoose from "mongoose";
 
 export async function POST(request) {
   try {
-    // 1️⃣ Authenticate admin
     const auth = await isAuthenticated("admin");
     if (!auth.isAuth) {
       return response(false, 403, "Unauthorized");
     }
 
     await connectDB();
-
-    // 2️⃣ Validate request body
     const payload = await request.json();
+
     const schema = zSchema.pick({
       product: true,
       sku: true,
-      color: true,
-      size: true,
+      color: zSchema.color.optional(),
+      size: zSchema.size.optional(),
       mrp: true,
       sellingPrice: true,
       discountPercentage: true,
       media: true,
+      moq: true,
+      stock: true,
     });
 
     const validate = schema.safeParse(payload);
@@ -37,13 +37,11 @@ export async function POST(request) {
 
     const variantData = validate.data;
 
-    // 3️⃣ Ensure the product exists
     const product = await ProductModel.findById(variantData.product).lean();
     if (!product) {
       return response(false, 404, "Product not found");
     }
 
-    // 4️⃣ Check if the product belongs to one of the admin's shops
     const shop = await ShopModel.findOne({
       _id: product.shop,
       owner: new mongoose.Types.ObjectId(auth.user._id),
@@ -56,16 +54,17 @@ export async function POST(request) {
       );
     }
 
-    // 5️⃣ Create the product variant
     const newProductVariant = new ProductVariantModel({
       product: variantData.product,
-      color: variantData.color,
-      size: variantData.size,
+      color: variantData.color || "",
+      size: variantData.size || "",
       sku: variantData.sku,
       mrp: variantData.mrp,
       sellingPrice: variantData.sellingPrice,
       discountPercentage: variantData.discountPercentage,
       media: variantData.media,
+      moq: variantData.moq,
+      stock: variantData.stock,
     });
 
     await newProductVariant.save();

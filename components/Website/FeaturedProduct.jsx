@@ -13,6 +13,8 @@ const FeaturedProduct = async () => {
 
   const productData = await res.json();
 
+  console.log("productData =>", productData);
+
   if (!productData) {
     return null;
   }

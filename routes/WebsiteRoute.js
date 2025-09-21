@@ -10,3 +10,8 @@ export const WEBSITE_SHOP = "/shop";
 
 export const WEBSITE_PRODUCT_DETAILS = (slug) =>
   slug ? `/product/${slug}` : "/product";
+
+export const WEBSITE_SHOP_DETAILS = (slug) =>
+  slug ? `/admin-shop/${slug}` : "/admin-shop";
+
+export const WEBSITE_CART = "/cart";

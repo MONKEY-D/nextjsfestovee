@@ -52,7 +52,6 @@ const AddProduct = () => {
     }
   }, [getCategory]);
 
-  // Form schema
   const formSchema = zSchema.pick({
     name: true,
     slug: true,
@@ -61,7 +60,6 @@ const AddProduct = () => {
     sellingPrice: true,
     discountPercentage: true,
     description: true,
-    type: true,
     moq: true,
     stock: true,
   });
@@ -77,8 +75,8 @@ const AddProduct = () => {
       discountPercentage: "",
       description: "",
       type: "variant",
-      moq: 1,
-      stock: 0,
+      moq: "",
+      stock: "",
     },
   });
 
@@ -119,7 +117,6 @@ const AddProduct = () => {
       if (selectedMedia.length === 0)
         return showToast("error", "Please select media");
 
-      // Attach media IDs
       values.media = selectedMedia.map((media) => media._id);
 
       const { data: response } = await axios.post(
@@ -209,41 +206,20 @@ const AddProduct = () => {
                   )}
                 />
 
-                {/* Type */}
-                <FormField
-                  control={form.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Product Type <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <select
-                          {...field}
-                          className="w-full border rounded p-2"
-                        >
-                          <option value="variant">variant</option>
-                          <option value="non-variant">non-variant</option>
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 {/* MOQ */}
                 <FormField
                   control={form.control}
                   name="moq"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Minimum Order Quantity (MOQ)</FormLabel>
+                      <FormLabel>
+                        MOQ <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
                           {...field}
-                          placeholder="Enter Minimum Order Quantity"
+                          type="number"
+                          placeholder="Enter MOQ"
                         />
                       </FormControl>
                       <FormMessage />
@@ -257,12 +233,14 @@ const AddProduct = () => {
                   name="stock"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Stock</FormLabel>
+                      <FormLabel>
+                        Stock <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
                           {...field}
-                          placeholder="Enter Stock Quantity"
+                          type="number"
+                          placeholder="Enter Stock"
                         />
                       </FormControl>
                       <FormMessage />

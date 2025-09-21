@@ -25,7 +25,6 @@ export async function POST(request) {
       discountPercentage: true,
       description: true,
       media: true,
-      type: true,
       moq: true,
       stock: true,
     });
@@ -52,14 +51,13 @@ export async function POST(request) {
       description: encode(productData.description),
       media: productData.media,
       shop: shop._id,
-      type: productData.type,
       moq: productData.moq,
       stock: productData.stock,
     });
 
     await newProduct.save();
 
-    return response(true, 200, "Product added successfully!!");
+    return response(true, 200, "Product added successfully!!", newProduct);
   } catch (error) {
     return catchError(error);
   }

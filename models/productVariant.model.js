@@ -8,16 +8,14 @@ const productVariantSchema = new mongoose.Schema(
     },
     color: {
       type: String,
-      required: true,
       trim: true,
     },
     size: {
       type: String,
-      required: true,
       trim: true,
     },
-    moq: { type: Number, default: 1 },
-    stock: { type: Number, default: 0 },
+    moq: { type: Number, required: true },
+    stock: { type: Number, required: true },
     mrp: {
       type: Number,
       required: true,

@@ -37,7 +37,6 @@ const breadcrumbData = [
 const AddProductVariant = () => {
   const [loading, setLoading] = useState(false);
   const [productOption, setProductOption] = useState([]);
-  const [selectedProductType, setSelectedProductType] = useState("variant");
   const { data: getProduct } = useFetch(
     "/api/product?deleteType=SD&&size=10000"
   );
@@ -58,12 +57,14 @@ const AddProductVariant = () => {
   const formSchema = zSchema.pick({
     product: true,
     sku: true,
-    color: true,
-    size: true,
+    color: zSchema.color.optional(),
+    size: zSchema.size.optional(),
     mrp: true,
     sellingPrice: true,
     discountPercentage: true,
     media: true,
+    moq: true,
+    stock: true,
   });
 
   const form = useForm({
@@ -77,6 +78,8 @@ const AddProductVariant = () => {
       sellingPrice: "",
       discountPercentage: "",
       media: [],
+      moq: "",
+      stock: "",
     },
   });
 
@@ -95,36 +98,7 @@ const AddProductVariant = () => {
     return () => subscription.unsubscribe();
   }, [form]);
 
-  // Handle product selection
-  const handleProductChange = async (productId) => {
-    form.setValue("product", productId);
-
-    if (!productId) {
-      setSelectedProductType("variant");
-      return;
-    }
-
-    try {
-      const { data } = await axios.get(`/api/product/type/${productId}`);
-      if (data.success) {
-        setSelectedProductType(data.data.product.type);
-        showToast("success","This product is Non-Variant type.")
-      } else {
-        showToast("error", "Failed to fetch product type");
-        setSelectedProductType("variant");
-      }
-    } catch (error) {
-      console.error(error);
-      showToast("error", "Error fetching product info");
-      setSelectedProductType("variant");
-    }
-  };
-
   const onSubmit = async (values) => {
-    if (selectedProductType === "non-variant") {
-      return showToast("error", "Cannot add variant to a non-variant product");
-    }
-
     setLoading(true);
     try {
       if (selectedMedia.length <= 0) {
@@ -183,13 +157,6 @@ const AddProductVariant = () => {
                   )}
                 />
 
-                {/* Non-variant warning */}
-                {selectedProductType === "non-variant" && (
-                  <div className="md:col-span-2 p-3 bg-yellow-100 text-yellow-800 rounded">
-                    This is a non-variant product. You cannot add variants.
-                  </div>
-                )}
-
                 {/* SKU */}
                 <FormField
                   control={form.control}
@@ -200,12 +167,7 @@ const AddProductVariant = () => {
                         SKU <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          type="text"
-                          {...field}
-                          placeholder="Enter SKU"
-                          disabled={selectedProductType === "non-variant"}
-                        />
+                        <Input type="text" {...field} placeholder="Enter SKU" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -219,14 +181,13 @@ const AddProductVariant = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Color <span className="text-red-500">*</span>
+                        Color
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="text"
                           {...field}
                           placeholder="Enter Color"
-                          disabled={selectedProductType === "non-variant"}
                         />
                       </FormControl>
                       <FormMessage />
@@ -241,7 +202,7 @@ const AddProductVariant = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Size <span className="text-red-500">*</span>
+                        Size
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -249,7 +210,48 @@ const AddProductVariant = () => {
                           selected={field.value}
                           setSelected={field.onChange}
                           isMulti={false}
-                          disabled={selectedProductType === "non-variant"}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* MOQ */}
+                <FormField
+                  control={form.control}
+                  name="moq"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        MOQ <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="Enter MOQ"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* stock */}
+                <FormField
+                  control={form.control}
+                  name="stock"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Stock <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="Enter Stock"
                         />
                       </FormControl>
                       <FormMessage />
@@ -271,7 +273,6 @@ const AddProductVariant = () => {
                           type="number"
                           {...field}
                           placeholder="Enter MRP"
-                          disabled={selectedProductType === "non-variant"}
                         />
                       </FormControl>
                       <FormMessage />
@@ -293,7 +294,6 @@ const AddProductVariant = () => {
                           type="number"
                           {...field}
                           placeholder="Enter Selling Price"
-                          disabled={selectedProductType === "non-variant"}
                         />
                       </FormControl>
                       <FormMessage />

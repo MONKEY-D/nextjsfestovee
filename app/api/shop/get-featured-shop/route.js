@@ -6,16 +6,16 @@ export async function GET() {
   try {
     await connectDB();
 
-    const getShops = await ShopModel.find({ visible: true, deletedAt: null })
+    const shops = await ShopModel.find({ visible: true, deletedAt: null })
       .populate("media", "_id secure_url")
       .limit(8)
       .lean();
 
-    if (!getShops || getShops.length === 0) {
+    if (!shops || shops.length === 0) {
       return response(false, 404, "Shops not found");
     }
 
-    return response(true, 200, "Shops found", getShops);
+    return response(true, 200, "Shops found", { data: shops });
   } catch (error) {
     return catchError(error);
   }

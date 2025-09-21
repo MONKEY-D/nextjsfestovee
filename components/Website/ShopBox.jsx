@@ -1,3 +1,4 @@
+import { WEBSITE_SHOP_DETAILS } from "@/routes/WebsiteRoute";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -8,7 +9,7 @@ const ShopBox = ({ shop }) => {
 
   return (
     <div className="rounded-lg hover:shadow-lg border overflow-hidden">
-      <Link href={`/shop/${shop._id}`}>
+      <Link href={WEBSITE_SHOP_DETAILS(shop.slug)}>
         <Image
           src={imageSrc}
           width={400}

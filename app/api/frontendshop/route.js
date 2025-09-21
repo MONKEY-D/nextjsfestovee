@@ -84,7 +84,7 @@ export async function GET(request) {
     let nextPage = null;
     if (products.length > limit) {
       nextPage = page + 1;
-      products.pop(); // remove extra item
+      products.pop();
     }
 
     return response(true, 200, "Products found", { products, nextPage });

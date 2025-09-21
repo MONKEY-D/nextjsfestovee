@@ -39,8 +39,11 @@ const Shop = () => {
     const { data } = await axios.get(
       `/api/frontendshop?page=${pageParam}&limit=${limit}&sort=${sorting}&${searchParam}`
     );
+    console.log("👉 fetchProduct API response:", data); 
     if (!data.success) throw new Error("Failed to fetch products");
-    return data.data; // returns { products, nextPage }
+
+    if (!data.success) throw new Error("Failed to fetch products");
+    return data;
   };
 
   const { error, data, isFetching, fetchNextPage, hasNextPage } =
