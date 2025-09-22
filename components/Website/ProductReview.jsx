@@ -299,6 +299,15 @@ const ProductReview = ({ productId }) => {
                   </div>
                 ))
               )}
+
+            {hasNextPage && (
+              <ButtonLoading
+                text="Load More"
+                type="button"
+                loading={isFetching}
+                onClick={fetchNextPage}
+              />
+            )}
           </div>
         </div>
       </div>

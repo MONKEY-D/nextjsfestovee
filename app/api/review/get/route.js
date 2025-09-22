@@ -12,7 +12,7 @@ export async function GET(request) {
     const searchParams = request.nextUrl.searchParams;
     const productId = searchParams.get("productId");
     const page = parseInt(searchParams.get("page")) || 0;
-    const limit = 10;
+    const limit = 6;
     const skip = page * limit;
 
     let matchQuery = {
@@ -38,6 +38,7 @@ export async function GET(request) {
         $match: matchQuery,
       },
       { $sort: { createdAt: -1 } },
+      { $skip: skip },
       { $limit: limit + 1 },
       {
         $project: {
