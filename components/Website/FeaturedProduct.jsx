@@ -28,7 +28,7 @@ const FeaturedProduct = async () => {
             Featured Products
           </h2>
           <Link
-            href="/products"
+            href="/shop"
             className="flex items-center gap-2 underline underline-offset-4 hover:text-primary text-sm sm:text-base"
           >
             View All

@@ -40,9 +40,12 @@ import React from "react";
 import ProductDetails from "./ProductDetails";
 
 const ProductPage = async ({ params, searchParams }) => {
-  const slug = params?.slug; // ✅ optional chaining
-  const size = searchParams?.size || null; // ✅ optional chaining
-  const color = searchParams?.color || null;
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+
+  const slug = resolvedParams?.slug;
+  const size = resolvedSearchParams?.size || null;
+  const color = resolvedSearchParams?.color || null;
 
   if (!slug) {
     return (

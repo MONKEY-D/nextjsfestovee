@@ -97,7 +97,8 @@ export async function GET(request, context) {
   try {
     await connectDB();
 
-    const slug = context?.params?.slug; // ✅ optional chaining
+    const params = await context.params;
+    const slug = params?.slug;
     if (!slug) return response(false, 404, "Product not found");
 
     const searchParams = new URL(request.url).searchParams;
@@ -117,13 +118,6 @@ export async function GET(request, context) {
       if (size && size !== "NA") filter.size = size;
       if (color && color !== "NA") filter.color = color;
       variant = await ProductVariantModel.findOne(filter)
-        .populate("media", "_id secure_url alt")
-        .lean();
-    }
-
-    // Fallback variant if type=variant
-    if (!variant && getProduct.type === "variant") {
-      variant = await ProductVariantModel.findOne({ product: getProduct._id })
         .populate("media", "_id secure_url alt")
         .lean();
     }

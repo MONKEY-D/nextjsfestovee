@@ -74,7 +74,6 @@ const AddProduct = () => {
       sellingPrice: "",
       discountPercentage: "",
       description: "",
-      type: "variant",
       moq: "",
       stock: "",
     },
