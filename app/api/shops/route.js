@@ -1,6 +1,5 @@
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunctions";
-import "../../../../../models/media.model";
 
 export async function GET() {
   try {
