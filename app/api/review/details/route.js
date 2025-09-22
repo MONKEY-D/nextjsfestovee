@@ -17,7 +17,7 @@ export async function GET(request) {
       {
         $match: {
           product: new mongoose.Types.ObjectId(productId),
-          deletedAt: ull,
+          deletedAt: null,
         },
       },
       { $group: { _id: "$rating", count: { $sum: 1 } } },
