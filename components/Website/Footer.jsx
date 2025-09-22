@@ -82,10 +82,10 @@ const Footer = () => {
               <Link href="">My Account</Link>
             </li>
             <li className="mb-2 text-gray-500">
-              <Link href="">Privacy Policy</Link>
+              <Link href="/privacy-policy">Privacy Policy</Link>
             </li>
             <li className="mb-2 text-gray-500">
-              <Link href="">Terms and Conditions</Link>
+              <Link href="/terms-and-conditions">Terms and Conditions</Link>
             </li>
             <li className="mb-2 text-gray-500">
               <ConfirmSellerDialog />

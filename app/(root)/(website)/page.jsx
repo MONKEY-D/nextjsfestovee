@@ -2,8 +2,6 @@ import MainSlider from "@/components/Website/MainSlider";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import banner5 from "@/public/banner/banner5.jpg";
-import banner6 from "@/public/banner/banner6.jpg";
 import FeaturedProduct from "@/components/Website/FeaturedProduct";
 import FeaturedShop from "@/components/Website/FeaturedShop";
 import Testimonial from "@/components/Website/Testimonial";
